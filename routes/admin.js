@@ -941,10 +941,10 @@ router.get('/settings/download-db', async (req, res) => {
 
     await mysqldump({
       connection: {
-        host: process.env.DB_HOST || '46.250.225.169',
-        user: process.env.DB_USER || 'demo_colormo_usr',
-        password: process.env.DB_PASSWORD || 'QRdKdVpp3pnNhXBt',
-        database: process.env.DB_NAME || 'my_loan_bazar',
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
       },
       dumpToFile: filePath,
     });
