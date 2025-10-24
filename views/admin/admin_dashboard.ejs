@@ -1,0 +1,1903 @@
+<%- include('../layouts/admin_layouts_header', { title: 'Admin | Dashboard', currentPage: 'dashboard' }) %>
+<%- include('../layouts/admin_layouts_sidebar', { currentPage: 'dashboard' }) %>
+
+<div class="admin-container">
+    <!-- Premium Dashboard Header -->
+    <div class="premium-header">
+        <div class="header-content">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Welcome back, Admin! 👋</h1>
+                <p class="welcome-subtitle">Here's what's happening with your submissions today.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-refresh" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards Grid -->
+        <div class="stats-grid-premium">
+            <div class="stat-card premium">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon-bg contact">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-main">
+                        <h3 class="stat-number"><%= contactStats?.total || 0 %></h3>
+                        <span class="stat-trend up">+12%</span>
+                    </div>
+                    <p class="stat-label">Total Contacts</p>
+                    <div class="stat-meta">
+                        <span class="stat-meta-item">
+                            <i class="fas fa-calendar-day"></i>
+                            <%= contactStats?.today || 0 %> today
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card premium">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon-bg enquiry">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-main">
+                        <h3 class="stat-number"><%= enquiryStats?.total || 0 %></h3>
+                        <span class="stat-trend up">+8%</span>
+                    </div>
+                    <p class="stat-label">Loan Enquiries</p>
+                    <div class="stat-meta">
+                        <span class="stat-meta-item">
+                            <i class="fas fa-calendar-day"></i>
+                            <%= enquiryStats?.today || 0 %> today
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card premium">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon-bg total">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-main">
+                        <h3 class="stat-number"><%= (contactStats?.total || 0) + (enquiryStats?.total || 0) %></h3>
+                        <span class="stat-trend up">+15%</span>
+                    </div>
+                    <p class="stat-label">Total Submissions</p>
+                    <div class="stat-meta">
+                        <span class="stat-meta-item">
+                            <i class="fas fa-bolt"></i>
+                            All time
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card premium">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon-bg growth">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-main">
+                        <h3 class="stat-number"><%= (contactStats?.today || 0) + (enquiryStats?.today || 0) %></h3>
+                        <span class="stat-trend up">+25%</span>
+                    </div>
+                    <p class="stat-label">Today's Activity</p>
+                    <div class="stat-meta">
+                        <span class="stat-meta-item">
+                            <i class="fas fa-fire"></i>
+                            Live updates
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <% if(message) { %>
+        <div class="premium-alert success">
+            <div class="alert-content">
+                <i class="fas fa-check-circle"></i>
+                <span><%= message %></span>
+            </div>
+            <button class="alert-close" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    <% } %>
+
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+        <div class="tab-buttons">
+            <button class="tab-button active" data-tab="enquiries">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Loan Enquiries
+                <span class="tab-badge"><%= enquiryStats?.total || 0 %></span>
+            </button>
+            <button class="tab-button" data-tab="contacts">
+                <i class="fas fa-envelope"></i>
+                Contact Submissions
+                <span class="tab-badge"><%= contactStats?.total || 0 %></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Enquiries Tab -->
+        <div class="tab-pane active" id="enquiries-tab">
+            <% if (enquiries.length === 0) { %>
+                <div class="premium-empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h3>No Enquiries Yet</h3>
+                    <p>Loan enquiries will appear here once customers start submitting applications.</p>
+                    <div class="empty-actions">
+                        <button class="btn-primary" onclick="location.reload()">
+                            <i class="fas fa-sync"></i>
+                            Refresh Page
+                        </button>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="premium-table-container">
+                    <div class="table-header">
+                        <div class="table-title">
+                            <h3>Loan Enquiry Management</h3>
+                            <p>Manage and review all loan application submissions</p>
+                        </div>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search enquiries..." id="searchEnquiries">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-scroll-container">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th width="60">ID</th>
+                                    <th>Customer</th>
+                                    <th>Contact Info</th>
+                                    <th>Financial Details</th>
+                                    <th>Service & Company</th>
+                                    <th>Bank Preference</th>
+                                    <th width="120">Date</th>
+                                    <th width="100" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% enquiries.forEach((enquiry, index) => { %>
+                                    <tr class="enquiry-row" data-enquiry='<%= JSON.stringify(enquiry).replace(/'/g, "&#39;") %>'>
+                                        <td class="text-center">
+                                            <span class="id-badge">#<%= enquiry.id %></span>
+                                        </td>
+                                        <td>
+                                            <div class="user-info">
+                                                <div class="user-avatar">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div class="user-details">
+                                                    <strong class="user-name"><%= enquiry.name %></strong>
+                                                    <div class="user-meta">
+                                                        <span class="meta-tag gender"><%= enquiry.gender || 'Not specified' %></span>
+                                                        <span class="meta-tag location"><%= enquiry.state || 'Unknown' %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="contact-details">
+                                                <div class="contact-item">
+                                                    <i class="fas fa-mobile-alt"></i>
+                                                    <span class="contact-value"><%= enquiry.mobile %></span>
+                                                </div>
+                                                <div class="contact-item">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    <span class="contact-value"><%= enquiry.pincode %></span>
+                                                </div>
+                                                <div class="contact-item">
+                                                    <i class="fas fa-location-arrow"></i>
+                                                    <span class="contact-value truncated" title="<%= enquiry.address %>">
+                                                        <%= enquiry.address.length > 30 ? enquiry.address.substring(0, 30) + '...' : enquiry.address %>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="financial-info">
+                                                <div class="amount-card">
+                                                    <div class="amount-label">Loan Amount</div>
+                                                    <div class="amount-value">₹<%= new Intl.NumberFormat('en-IN').format(enquiry.loan_amount || 0) %></div>
+                                                </div>
+                                                <div class="financial-meta">
+                                                    <div class="meta-item">
+                                                        <span class="meta-label">Salary:</span>
+                                                        <span class="meta-value">₹<%= new Intl.NumberFormat('en-IN').format(enquiry.monthly_salary || 0) %></span>
+                                                    </div>
+                                                    <div class="meta-item">
+                                                        <span class="meta-label">EMIs:</span>
+                                                        <span class="meta-value">₹<%= new Intl.NumberFormat('en-IN').format(enquiry.emis || 0) %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="service-info">
+                                                <div class="service-badge">
+                                                    <i class="fas fa-briefcase"></i>
+                                                    <span><%= enquiry.service_name || 'General' %></span>
+                                                </div>
+                                                <div class="company-name">
+                                                    <i class="fas fa-building"></i>
+                                                    <%= enquiry.company_name || 'No company' %>
+                                                </div>
+                                                <% if (enquiry.company_address) { %>
+                                                    <div class="company-address truncated" title="<%= enquiry.company_address %>">
+                                                        <i class="fas fa-map-pin"></i>
+                                                        <%= enquiry.company_address.length > 25 ? enquiry.company_address.substring(0, 25) + '...' : enquiry.company_address %>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="bank-preference">
+                                                <div class="bank-type-badge <%= (enquiry.preferred_type || 'unknown').toLowerCase() %>">
+                                                    <i class="fas fa-university"></i>
+                                                    <%= enquiry.preferred_type || 'Not specified' %>
+                                                </div>
+                                                <div class="bank-name">
+                                                    <%= enquiry.preferred_institution || 'No institution selected' %>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="date-display">
+                                                <div class="date-main"><%= new Date(enquiry.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></div>
+                                                <div class="time-sub"><%= new Date(enquiry.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %></div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="action-buttons">
+                                                <button class="btn-action btn-view-premium" 
+                                                        onclick="viewEnquiryDetails(this.closest('tr').getAttribute('data-enquiry'))"
+                                                        title="View Full Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <form class="delete-form-inline" 
+                                                      action="/admin/dashboard/delete-enquiry/<%= enquiry.id %>" 
+                                                      method="POST">
+                                                    <button type="submit" 
+                                                            class="btn-action btn-delete-premium" 
+                                                            onclick="return confirmDelete(event, 'enquiry')"
+                                                            title="Delete Enquiry">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Enquiries Pagination -->
+                    <% if (totalPagesEnquiries > 1) { %>
+                        <div class="premium-pagination">
+                            <div class="pagination-info">
+                                Showing page <%= currentPageEnquiries %> of <%= totalPagesEnquiries %> • 
+                                <%= enquiries.length %> records
+                            </div>
+                            <nav class="pagination-nav">
+                                <% if (currentPageEnquiries > 1) { %>
+                                    <a href="/admin/dashboard?pageEnquiries=<%= currentPageEnquiries - 1 %>" class="page-nav prev">
+                                        <i class="fas fa-chevron-left"></i>
+                                        Previous
+                                    </a>
+                                <% } %>
+                                
+                                <div class="page-numbers">
+                                    <% for(let i = 1; i <= totalPagesEnquiries; i++) { %>
+                                        <% if (i === 1 || i === totalPagesEnquiries || (i >= currentPageEnquiries - 1 && i <= currentPageEnquiries + 1)) { %>
+                                            <a href="/admin/dashboard?pageEnquiries=<%= i %>" 
+                                               class="page-number <%= i === currentPageEnquiries ? 'active' : '' %>">
+                                                <%= i %>
+                                            </a>
+                                        <% } else if (i === currentPageEnquiries - 2 || i === currentPageEnquiries + 2) { %>
+                                            <span class="page-ellipsis">...</span>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+
+                                <% if (currentPageEnquiries < totalPagesEnquiries) { %>
+                                    <a href="/admin/dashboard?pageEnquiries=<%= currentPageEnquiries + 1 %>" class="page-nav next">
+                                        Next
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                <% } %>
+                            </nav>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Contacts Tab -->
+        <div class="tab-pane" id="contacts-tab">
+            <% if (contacts.length === 0) { %>
+                <div class="premium-empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h3>No Contact Submissions</h3>
+                    <p>Contact form submissions from your website will appear here.</p>
+                    <div class="empty-actions">
+                        <button class="btn-primary" onclick="location.reload()">
+                            <i class="fas fa-sync"></i>
+                            Refresh Page
+                        </button>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="premium-table-container">
+                    <div class="table-header">
+                        <div class="table-title">
+                            <h3>Contact Submissions</h3>
+                            <p>Manage all contact form messages from your website</p>
+                        </div>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search contacts..." id="searchContacts">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-scroll-container">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th width="60">ID</th>
+                                    <th>Contact Person</th>
+                                    <th>Contact Information</th>
+                                    <th>Subject</th>
+                                    <th>Message Preview</th>
+                                    <th width="120">Date</th>
+                                    <th width="100" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% contacts.forEach((contact, index) => { %>
+                                    <tr>
+                                        <td class="text-center">
+                                            <span class="id-badge">#<%= contact.id %></span>
+                                        </td>
+                                        <td>
+                                            <div class="user-info">
+                                                <div class="user-avatar contact">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <div class="user-details">
+                                                    <strong class="user-name"><%= contact.name %></strong>
+                                                    <div class="user-meta">
+                                                        <span class="meta-tag email"><%= contact.email %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="contact-details">
+                                                <div class="contact-item">
+                                                    <i class="fas fa-envelope"></i>
+                                                    <span class="contact-value"><%= contact.email %></span>
+                                                </div>
+                                                <div class="contact-item">
+                                                    <i class="fas fa-phone"></i>
+                                                    <span class="contact-value"><%= contact.phone %></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="subject-badge"><%= contact.subject %></span>
+                                        </td>
+                                        <td>
+                                            <div class="message-preview-premium" 
+                                                 onclick="showMessage('<%= contact.message.replace(/'/g, "\\'").replace(/"/g, '&quot;') %>')">
+                                                <div class="message-text">
+                                                    <%= contact.message.length > 80 ? contact.message.substring(0, 80) + '...' : contact.message %>
+                                                </div>
+                                                <% if (contact.message.length > 80) { %>
+                                                    <span class="read-more-link">Read full message</span>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="date-display">
+                                                <div class="date-main"><%= new Date(contact.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></div>
+                                                <div class="time-sub"><%= new Date(contact.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %></div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="action-buttons">
+                                                <form class="delete-form-inline" 
+                                                      action="/admin/dashboard/delete/<%= contact.id %>" 
+                                                      method="POST">
+                                                    <button type="submit" 
+                                                            class="btn-action btn-delete-premium" 
+                                                            onclick="return confirmDelete(event, 'contact')"
+                                                            title="Delete Message">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Contacts Pagination -->
+                    <% if (totalPagesContacts > 1) { %>
+                        <div class="premium-pagination">
+                            <div class="pagination-info">
+                                Showing page <%= currentPageContacts %> of <%= totalPagesContacts %> • 
+                                <%= contacts.length %> records
+                            </div>
+                            <nav class="pagination-nav">
+                                <% if (currentPageContacts > 1) { %>
+                                    <a href="/admin/dashboard?pageContacts=<%= currentPageContacts - 1 %>" class="page-nav prev">
+                                        <i class="fas fa-chevron-left"></i>
+                                        Previous
+                                    </a>
+                                <% } %>
+                                
+                                <div class="page-numbers">
+                                    <% for(let i = 1; i <= totalPagesContacts; i++) { %>
+                                        <% if (i === 1 || i === totalPagesContacts || (i >= currentPageContacts - 1 && i <= currentPageContacts + 1)) { %>
+                                            <a href="/admin/dashboard?pageContacts=<%= i %>" 
+                                               class="page-number <%= i === currentPageContacts ? 'active' : '' %>">
+                                                <%= i %>
+                                            </a>
+                                        <% } else if (i === currentPageContacts - 2 || i === currentPageContacts + 2) { %>
+                                            <span class="page-ellipsis">...</span>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+
+                                <% if (currentPageContacts < totalPagesContacts) { %>
+                                    <a href="/admin/dashboard?pageContacts=<%= currentPageContacts + 1 %>" class="page-nav next">
+                                        Next
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                <% } %>
+                            </nav>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// Tab Navigation
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Update buttons
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update panes
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+            document.getElementById(`${targetTab}-tab`).classList.add('active');
+        });
+    });
+
+    // Auto-hide success alerts
+    const alerts = document.querySelectorAll('.premium-alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    });
+
+    // Search functionality
+    const searchEnquiries = document.getElementById('searchEnquiries');
+    if (searchEnquiries) {
+        searchEnquiries.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#enquiries-tab .enquiry-row');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+
+    const searchContacts = document.getElementById('searchContacts');
+    if (searchContacts) {
+        searchContacts.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#contacts-tab tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    }
+});
+
+// SweetAlert confirmation for delete actions
+function confirmDelete(event, type) {
+    event.preventDefault();
+    
+    const itemType = type === 'enquiry' ? 'loan enquiry' : 'contact message';
+    const form = event.target.closest('form');
+    
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `This will permanently delete the ${itemType}. This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+        background: '#1f2937',
+        color: '#f9fafb',
+        customClass: {
+            popup: 'premium-swal',
+            confirmButton: 'swal-confirm-premium',
+            cancelButton: 'swal-cancel-premium'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+                title: 'Deleting...',
+                text: 'Please wait while we process your request',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                background: '#1f2937',
+                color: '#f9fafb',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Submit the form
+            form.submit();
+        }
+    });
+    
+    return false;
+}
+
+// View enquiry details - FIXED VERSION
+function viewEnquiryDetails(enquiryData) {
+    try {
+        // Parse the enquiry data safely
+        let enquiry;
+        if (typeof enquiryData === 'string') {
+            enquiry = JSON.parse(enquiryData.replace(/&#39;/g, "'"));
+        } else {
+            enquiry = enquiryData;
+        }
+
+        // Format values safely
+        const formatValue = (value) => value || 'Not provided';
+        const formatCurrency = (value) => {
+            if (!value || isNaN(value)) return 'Not provided';
+            return '₹' + new Intl.NumberFormat('en-IN').format(parseFloat(value));
+        };
+
+        const detailsHtml = `
+            <div class="enquiry-details-modal">
+                <div class="detail-section">
+                    <h4>👤 Personal Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>Full Name:</label>
+                            <span class="detail-value">${formatValue(enquiry.name)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Mobile Number:</label>
+                            <span class="detail-value">${formatValue(enquiry.mobile)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Gender:</label>
+                            <span class="detail-value">${formatValue(enquiry.gender)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Pincode:</label>
+                            <span class="detail-value">${formatValue(enquiry.pincode)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>📍 Address Details</h4>
+                    <div class="address-card">
+                        <i class="fas fa-home"></i>
+                        <div class="address-text">${formatValue(enquiry.address)}</div>
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>State:</label>
+                            <span class="detail-value">${formatValue(enquiry.state)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>District:</label>
+                            <span class="detail-value">${formatValue(enquiry.district)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>🏢 Company Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item full-width">
+                            <label>Company Name:</label>
+                            <span class="detail-value">${formatValue(enquiry.company_name)}</span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Company Address:</label>
+                            <span class="detail-value">${formatValue(enquiry.company_address)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>💰 Financial Information</h4>
+                    <div class="financial-grid">
+                        <div class="financial-card">
+                            <div class="financial-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div class="financial-content">
+                                <div class="financial-label">Loan Amount</div>
+                                <div class="financial-value">${formatCurrency(enquiry.loan_amount)}</div>
+                            </div>
+                        </div>
+                        <div class="financial-card">
+                            <div class="financial-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="financial-content">
+                                <div class="financial-label">Monthly Salary</div>
+                                <div class="financial-value">${formatCurrency(enquiry.monthly_salary)}</div>
+                            </div>
+                        </div>
+                        <div class="financial-card">
+                            <div class="financial-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="financial-content">
+                                <div class="financial-label">Existing EMIs</div>
+                                <div class="financial-value">${formatCurrency(enquiry.emis)}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>🏦 Bank Preference</h4>
+                    <div class="bank-grid">
+                        <div class="bank-card">
+                            <div class="bank-icon">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <div class="bank-content">
+                                <div class="bank-label">Preferred Type</div>
+                                <div class="bank-value ${(enquiry.preferred_type || '').toLowerCase()}">
+                                    ${formatValue(enquiry.preferred_type)}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bank-card">
+                            <div class="bank-icon">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                            <div class="bank-content">
+                                <div class="bank-label">Institution</div>
+                                <div class="bank-value">${formatValue(enquiry.preferred_institution)}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>📋 Service Details</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>Service Type:</label>
+                            <span class="detail-value">${formatValue(enquiry.service_name)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Submission Date:</label>
+                            <span class="detail-value">${new Date(enquiry.created_at).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        Swal.fire({
+            title: '<div class="swal-title">Enquiry Details</div>',
+            html: detailsHtml,
+            width: 900,
+            padding: '0',
+            showCloseButton: true,
+            showConfirmButton: false,
+            background: '#1f2937',
+            color: '#f9fafb',
+            customClass: {
+                popup: 'premium-enquiry-modal',
+                closeButton: 'swal-close-premium'
+            }
+        });
+    } catch (error) {
+        console.error('Error displaying enquiry details:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Could not load enquiry details. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
+// Show full message
+function showMessage(message) {
+    Swal.fire({
+        title: 'Full Message',
+        text: message,
+        width: 600,
+        padding: '2em',
+        background: '#1f2937',
+        color: '#f9fafb',
+        confirmButtonText: 'Close',
+        customClass: {
+            popup: 'premium-message-modal',
+            confirmButton: 'swal-confirm-premium'
+        }
+    });
+}
+
+// Update notification badge (fixed)
+async function updateNotificationBadge() {
+    try {
+        const response = await fetch('/admin/unread-count');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                const badge = document.querySelector('.notification-badge');
+                if (badge && data.total > 0) {
+                    badge.textContent = data.total;
+                    badge.style.display = 'inline-block';
+                }
+            }
+        }
+    } catch (error) {
+        console.log('Notification update failed:', error);
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateNotificationBadge();
+});
+</script>
+
+<style>
+/* Premium Dashboard Styles */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --dark-bg: #1f2937;
+    --darker-bg: #111827;
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --text-light: #f9fafb;
+    --text-muted: #d1d5db;
+    --border-light: rgba(255, 255, 255, 0.1);
+}
+
+.admin-container {
+    padding: 0;
+    background: var(--darker-bg);
+    min-height: 100vh;
+}
+
+/* Premium Header */
+.premium-header {
+    background: var(--primary-gradient);
+    padding: 2rem 2rem 1.5rem 2rem;
+    color: var(--text-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.03)"><polygon points="0,0 1000,50 1000,100 0,100"/></svg>') bottom center/cover no-repeat;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #fff 0%, #e5e7eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 400;
+}
+
+.btn-refresh {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.btn-refresh:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Premium Stats Grid */
+.stats-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card.premium {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card.premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card.premium:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.stat-card.premium:hover::before {
+    opacity: 1;
+}
+
+.stat-icon-wrapper {
+    flex-shrink: 0;
+}
+
+.stat-icon-bg {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.stat-icon-bg.contact { background: rgba(59, 130, 246, 0.2); }
+.stat-icon-bg.enquiry { background: rgba(16, 185, 129, 0.2); }
+.stat-icon-bg.total { background: rgba(139, 92, 246, 0.2); }
+.stat-icon-bg.growth { background: rgba(245, 158, 11, 0.2); }
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #fff 0%, #e5e7eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-trend {
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+}
+
+.stat-trend.up {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+}
+
+.stat-meta {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-meta-item {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Premium Alert */
+.premium-alert {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideInDown 0.5s ease-out;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.alert-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+}
+
+.alert-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.alert-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Tab Navigation */
+.tab-navigation {
+    background: var(--dark-bg);
+    padding: 0 2rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-button:hover {
+    color: var(--text-light);
+}
+
+.tab-button.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+.tab-badge {
+    background: #3b82f6;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Tab Content */
+.tab-content {
+    padding: 2rem;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium Table Container */
+.premium-table-container {
+    background: var(--dark-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+}
+
+.table-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-title h3 {
+    color: var(--text-light);
+    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.table-title p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.search-box {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border: 1px solid var(--border-light);
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.search-box input {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    outline: none;
+    width: 200px;
+}
+
+.search-box input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Table Styles */
+.table-scroll-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.premium-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--dark-bg);
+}
+
+.premium-table th {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.premium-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+}
+
+.premium-table tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Custom Elements */
+.id-badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(59, 130, 246, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+}
+
+.user-avatar.contact {
+    background: rgba(139, 92, 246, 0.2);
+    color: #8b5cf6;
+}
+
+.user-name {
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+}
+
+.user-meta {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.meta-tag {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.contact-details .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.contact-details .contact-item i {
+    width: 16px;
+    color: var(--text-muted);
+}
+
+.truncated {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.financial-info .amount-card {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.amount-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.amount-value {
+    font-weight: 700;
+    color: #22c55e;
+    font-size: 1.1rem;
+}
+
+.financial-meta {
+    display: flex;
+    gap: 1rem;
+}
+
+.meta-item {
+    font-size: 0.75rem;
+}
+
+.meta-label {
+    color: var(--text-muted);
+}
+
+.meta-value {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.service-badge {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.company-name, .company-address {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.bank-type-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.bank-type-badge.bank {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.bank-type-badge.nbfc {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.bank-type-badge.unknown {
+    background: rgba(107, 114, 128, 0.2);
+    color: #6b7280;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.bank-name {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.date-display {
+    text-align: center;
+}
+
+.date-main {
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+}
+
+.time-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.subject-badge {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.message-preview-premium {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.message-preview-premium:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.message-text {
+    color: var(--text-light);
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+.read-more-link {
+    color: #3b82f6;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.btn-view-premium {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.btn-view-premium:hover {
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-delete-premium {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete-premium:hover {
+    background: #ef4444;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Premium Pagination */
+.premium-pagination {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pagination-info {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-nav {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
+    color: var(--text-light);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.page-nav:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.page-numbers {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.page-number {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.page-number:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.page-number.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+.page-ellipsis {
+    color: var(--text-muted);
+    padding: 0 0.5rem;
+}
+
+/* Empty States */
+.premium-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+}
+
+.premium-empty-state h3 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.premium-empty-state p {
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.empty-actions .btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.empty-actions .btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* SweetAlert Customizations */
+.premium-swal .swal2-popup {
+    background: var(--dark-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+}
+
+.swal-confirm-premium {
+    background: #ef4444 !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+
+.swal-cancel-premium {
+    background: #6b7280 !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+
+.premium-enquiry-modal .swal2-popup {
+    background: var(--dark-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.swal-title {
+    color: var(--text-light) !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+}
+
+.enquiry-details-modal {
+    color: var(--text-light);
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+.enquiry-details-modal .detail-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.enquiry-details-modal .detail-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.enquiry-details-modal .detail-section h4 {
+    color: var(--text-light);
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-item label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.address-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.address-card i {
+    color: var(--text-muted);
+    margin-top: 0.125rem;
+}
+
+.address-text {
+    color: var(--text-light);
+    line-height: 1.5;
+    flex: 1;
+}
+
+.financial-grid, .bank-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.financial-card, .bank-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.financial-icon, .bank-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(59, 130, 246, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    font-size: 1.25rem;
+}
+
+.financial-label, .bank-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.financial-value, .bank-value {
+    font-weight: 700;
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.bank-value.bank {
+    color: #3b82f6;
+}
+
+.bank-value.nbfc {
+    color: #10b981;
+}
+
+.premium-message-modal .swal2-popup {
+    background: var(--dark-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+}
+
+.swal-close-premium {
+    color: var(--text-muted) !important;
+}
+
+.swal-close-premium:hover {
+    color: var(--text-light) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .stats-grid-premium {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .table-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .search-box input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .premium-header {
+        padding: 1.5rem;
+    }
+    
+    .tab-content {
+        padding: 1rem;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+    }
+    
+    .stats-grid-premium {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card.premium {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .premium-pagination {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .table-scroll-container {
+        overflow-x: auto;
+    }
+    
+    .premium-table {
+        min-width: 1000px;
+    }
+}
+
+@media (max-width: 640px) {
+    .tab-buttons {
+        flex-direction: column;
+    }
+    
+    .tab-button {
+        justify-content: center;
+    }
+    
+    .pagination-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .page-numbers {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Scrollbar Styling */
+.table-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Animations */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<%- include('../layouts/admin_layouts_footer') %>

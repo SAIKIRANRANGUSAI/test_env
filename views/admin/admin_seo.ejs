@@ -1,0 +1,770 @@
+<%- include('../layouts/admin_layouts_header', { title: 'Admin | SEO Settings' , currentPage: 'seo_settings' }) %>
+    <%- include('../layouts/admin_layouts_sidebar', { currentPage: 'seo_settings' }) %>
+
+        <div class="container-fluid px-4 py-4">
+            <!-- Premium Header -->
+            <div class="premium-header mb-5">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 fw-bold text-gradient mb-2">SEO Settings Management</h1>
+                        <p class="text-muted mb-0">Manage SEO meta tags and social media optimization</p>
+                    </div>
+                    <!-- <div class="premium-icon">
+                <i class="fas fa-search"></i>
+            </div> -->
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <!-- Success/Error Messages -->
+<% if (successMessage) { %>
+    <div class="alert-premium-success alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-3"></i>
+            <div class="fw-medium"><%= successMessage %></div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+<% } %>
+
+<% if (errorMessage) { %>
+    <div class="alert-premium-error alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-circle me-3"></i>
+            <div class="fw-medium"><%= errorMessage %></div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+<% } %>
+
+
+                            <!-- Add New SEO Setting -->
+                            <div class="premium-card mb-5">
+                                <div class="premium-card-header">
+                                    <div class="d-flex align-items-center">
+                                        <div class="premium-icon-small me-3">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="mb-1 fw-bold">Add New SEO Settings</h4>
+                                            <p class="mb-0 text-muted">Add SEO settings for a new page</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="premium-card-body">
+                                    <form action="/admin/seo-settings/add" method="POST" enctype="multipart/form-data"
+                                        id="addSeoForm">
+                                        <div class="row g-4">
+                                            <!-- Basic SEO -->
+                                            <div class="col-12">
+                                                <h5 class="fw-bold mb-3 text-primary"><i
+                                                        class="fas fa-tags me-2"></i>Basic SEO</h5>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Page Name *</label>
+                                                <input type="text" class="form-control premium-input" name="page_name"
+                                                    placeholder="home, about, services, contact" required>
+                                                <small class="text-muted">Unique identifier for the page (e.g., 'home',
+                                                    'about')</small>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Page Title *</label>
+                                                <input type="text" class="form-control premium-input" name="title"
+                                                    placeholder="Page Title - Company Name" required>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">Meta Description *</label>
+                                                <textarea class="form-control premium-input" name="description" rows="3"
+                                                    placeholder="Brief description for search engines (150-160 characters)..."
+                                                    required></textarea>
+                                                <small class="text-muted" id="descCounter">0 characters</small>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">Keywords</label>
+                                                <textarea class="form-control premium-input" name="keywords" rows="2"
+                                                    placeholder="keyword1, keyword2, keyword3"></textarea>
+                                                <small class="text-muted">Separate keywords with commas</small>
+                                            </div>
+
+                                            <!-- Open Graph -->
+                                            <div class="col-12 mt-4">
+                                                <h5 class="fw-bold mb-3 text-primary"><i
+                                                        class="fab fa-facebook me-2"></i>Open Graph (Facebook)</h5>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">OG Title</label>
+                                                <input type="text" class="form-control premium-input" name="og_title"
+                                                    placeholder="Title for social media sharing">
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">OG Description</label>
+                                                <textarea class="form-control premium-input" name="og_description"
+                                                    rows="2"
+                                                    placeholder="Description for social media sharing"></textarea>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">OG Image</label>
+                                                <input type="file" class="form-control premium-input" name="og_image"
+                                                    accept="image/*" onchange="previewImage(this, 'ogPreview')">
+                                                <div class="image-preview mt-3" id="ogPreview" style="display: none;">
+                                                    <img src="" alt="Preview" class="preview-thumbnail">
+                                                </div>
+                                            </div>
+
+                                            <!-- Twitter Card -->
+                                            <div class="col-12 mt-4">
+                                                <h5 class="fw-bold mb-3 text-primary"><i
+                                                        class="fab fa-twitter me-2"></i>Twitter Card</h5>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Twitter Title</label>
+                                                <input type="text" class="form-control premium-input"
+                                                    name="twitter_title" placeholder="Title for Twitter sharing">
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">Twitter Description</label>
+                                                <textarea class="form-control premium-input" name="twitter_description"
+                                                    rows="2" placeholder="Description for Twitter sharing"></textarea>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">Twitter Image</label>
+                                                <input type="file" class="form-control premium-input"
+                                                    name="twitter_image" accept="image/*"
+                                                    onchange="previewImage(this, 'twitterPreview')">
+                                                <div class="image-preview mt-3" id="twitterPreview"
+                                                    style="display: none;">
+                                                    <img src="" alt="Preview" class="preview-thumbnail">
+                                                </div>
+                                            </div>
+
+                                            <!-- Submit Button -->
+                                            <div class="col-12 mt-4">
+                                                <button type="submit" class="btn-premium">
+                                                    <i class="fas fa-plus me-2"></i>Add SEO Settings
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Current SEO Settings -->
+                            <div class="premium-card">
+                                <div class="premium-card-header">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <div class="premium-icon-small me-3">
+                                                <i class="fas fa-list"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="mb-1 fw-bold">Current SEO Settings</h4>
+                                                <p class="mb-0 text-muted">
+                                                    <%= seoSettings.length %> pages configured
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span class="badge-premium-count">
+                                            <%= seoSettings.length %> Pages
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="premium-card-body">
+                                    <% if (seoSettings && seoSettings.length> 0) { %>
+                                        <div class="row g-4">
+                                            <% seoSettings.forEach((seo, index)=> { %>
+                                                <div class="col-12">
+                                                    <div class="seo-card">
+                                                        <div class="seo-header">
+                                                            <div class="seo-info">
+                                                                <h5 class="mb-1 text-primary">
+                                                                    <i class="fas fa-file me-2"></i>
+                                                                    <%= seo.page_name %>
+                                                                </h5>
+                                                                <% if (seo.title) { %>
+                                                                    <p class="mb-1"><strong>Title:</strong>
+                                                                        <%= seo.title.length> 60 ?
+                                                                            seo.title.substring(0, 60) + '...' :
+                                                                            seo.title %>
+                                                                    </p>
+                                                                    <% } %>
+                                                                        <% if (seo.description) { %>
+                                                                            <p class="mb-1">
+                                                                                <strong>Description:</strong>
+                                                                                <%= seo.description.length> 80 ?
+                                                                                    seo.description.substring(0, 80) +
+                                                                                    '...' : seo.description %>
+                                                                            </p>
+                                                                            <% } %>
+                                                            </div>
+                                                            <div class="seo-actions">
+                                                                <!-- <button class="btn-premium-icon btn-edit" 
+                                onclick="openEditModal(<%= JSON.stringify(seo).replace(/"/g, '&quot;') %>)">
+                            <i class="fas fa-edit"></i>
+                        </button> -->
+                                                                <button class="btn-premium-icon btn-edit"
+                                                                    onclick='openEditModal(<%- JSON.stringify(seo) %>)'>
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+
+                                                                <button class="btn-premium-icon btn-danger-icon"
+                                                                    onclick="confirmDelete(<%= seo.id %>, '<%= seo.page_name %>')">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="seo-footer">
+                                                            <small class="text-muted">
+                                                                Updated: <%= seo.updated_at ? new
+                                                                    Date(seo.updated_at).toLocaleDateString() : 'Never'
+                                                                    %>
+                                                                    <% if (seo.og_image || seo.twitter_image) { %>
+                                                                        • <i class="fas fa-image text-success"></i> Has
+                                                                        images
+                                                                        <% } %>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+                                        </div>
+                                        <% } else { %>
+                                            <div class="empty-seo-state text-center py-5">
+                                                <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                                                <h5 class="text-muted">No SEO Settings Yet</h5>
+                                                <p class="text-muted mb-4">Add your first SEO settings to get started
+                                                </p>
+                                            </div>
+                                            <% } %>
+                                </div>
+                            </div>
+        </div>
+
+        <!-- Edit SEO Modal -->
+        <div class="modal fade" id="editSeoModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content premium-modal">
+                    <div class="modal-header premium-modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-edit me-2"></i>
+                            Edit SEO Settings
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="editSeoForm" method="POST" enctype="multipart/form-data">
+                        <div class="modal-body premium-modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Page Name *</label>
+                                    <input type="text" class="form-control premium-input" name="page_name"
+                                        id="editPageName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Page Title *</label>
+                                    <input type="text" class="form-control premium-input" name="title" id="editTitle"
+                                        required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Meta Description *</label>
+                                    <textarea class="form-control premium-input" name="description" id="editDescription"
+                                        rows="3" required></textarea>
+                                    <small class="text-muted" id="editDescCounter">0 characters</small>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Keywords</label>
+                                    <textarea class="form-control premium-input" name="keywords" id="editKeywords"
+                                        rows="2"></textarea>
+                                </div>
+
+                                <div class="col-12 mt-3">
+                                    <h6 class="fw-bold text-primary">Open Graph Settings</h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">OG Title</label>
+                                    <input type="text" class="form-control premium-input" name="og_title"
+                                        id="editOgTitle">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">OG Description</label>
+                                    <textarea class="form-control premium-input" name="og_description"
+                                        id="editOgDescription" rows="2"></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">OG Image</label>
+                                    <input type="file" class="form-control premium-input" name="og_image"
+                                        accept="image/*" onchange="previewImage(this, 'editOgPreview')">
+                                    <div class="image-preview mt-3" id="editOgPreview">
+                                        <img id="editOgPreviewImage" src="" alt="Preview" class="preview-thumbnail">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mt-3">
+                                    <h6 class="fw-bold text-primary">Twitter Settings</h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Twitter Title</label>
+                                    <input type="text" class="form-control premium-input" name="twitter_title"
+                                        id="editTwitterTitle">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Twitter Description</label>
+                                    <textarea class="form-control premium-input" name="twitter_description"
+                                        id="editTwitterDescription" rows="2"></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Twitter Image</label>
+                                    <input type="file" class="form-control premium-input" name="twitter_image"
+                                        accept="image/*" onchange="previewImage(this, 'editTwitterPreview')">
+                                    <div class="image-preview mt-3" id="editTwitterPreview">
+                                        <img id="editTwitterPreviewImage" src="" alt="Preview"
+                                            class="preview-thumbnail">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer premium-modal-footer">
+                            <button type="submit" class="btn-premium">
+                                <i class="fas fa-save me-2"></i>Update SEO Settings
+                            </button>
+                            <button type="button" class="btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content premium-modal">
+                    <div class="modal-header premium-modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Confirm Deletion
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body premium-modal-body text-center">
+                        <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                        <h5>Delete SEO Settings</h5>
+                        <p>Are you sure you want to delete SEO settings for <strong id="deletePageName"></strong>?</p>
+                        <p class="text-muted small">This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer premium-modal-footer justify-content-center">
+                        <form id="deleteForm" method="POST" class="d-inline">
+                            <button type="submit" class="btn-danger">
+                                <i class="fas fa-trash-alt me-2"></i> Delete Settings
+                            </button>
+                        </form>
+                        <button type="button" class="btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Bootstrap JS bundle (includes Popper) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Your custom JS -->
+        <!-- <script src="/js/seo-settings.js"></script> -->
+
+        <style>
+            /* Premium Styles */
+            :root {
+                --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --success-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+                --danger-gradient: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+                --premium-bg: #f8fafc;
+                --premium-border: #e2e8f0;
+                --premium-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            /* .modal-dialog-centered{
+        justify-content: center !important;
+    } */
+            .premium-header {
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .premium-icon {
+                width: 60px;
+                height: 60px;
+                background: var(--primary-gradient);
+                border-radius: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                box-shadow: var(--premium-shadow);
+            }
+
+            .premium-card {
+                background: white;
+                border-radius: 20px;
+                box-shadow: var(--premium-shadow);
+                border: 1px solid var(--premium-border);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+
+            .premium-card-header {
+                background: var(--premium-bg);
+                padding: 2rem;
+                border-bottom: 1px solid var(--premium-border);
+            }
+
+            .premium-card-body {
+                padding: 2rem;
+            }
+
+            .premium-icon-small {
+                width: 50px;
+                height: 50px;
+                background: var(--primary-gradient);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+            .premium-modal {
+    border-radius: 20px;
+    border: none;
+    margin: 0 auto;
+    box-shadow: var(--premium-shadow);
+}
+.modal-content {
+    background-color: white;
+    padding: 24px;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-height: 600px;
+    overflow-y: scroll;
+    max-width: 700px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-top: 4px solid var(--primary);
+}
+
+            .premium-input {
+                border: 2px solid #e2e8f0;
+                border-radius: 10px;
+                padding: 0.75rem 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .premium-input:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+            /* SEO Card Styles */
+            .seo-card {
+                background: white;
+                border: 1px solid var(--premium-border);
+                border-radius: 15px;
+                padding: 1.5rem;
+                transition: all 0.3s ease;
+            }
+
+            .seo-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--premium-shadow);
+            }
+
+            .seo-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+            }
+
+            .seo-info h5 {
+                color: #2d3748;
+            }
+
+            .seo-info p {
+                margin: 0.25rem 0;
+                color: #4a5568;
+                font-size: 0.9rem;
+            }
+
+            .seo-actions {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .seo-footer {
+                border-top: 1px solid var(--premium-border);
+                padding-top: 1rem;
+            }
+
+            /* Buttons */
+            .btn-premium {
+                background: var(--primary-gradient);
+                color: white;
+                border: none;
+                padding: 0.8rem 1.5rem;
+                border-radius: 10px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .btn-premium:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            }
+
+            .btn-premium-icon {
+                width: 35px;
+                height: 35px;
+                background: white;
+                border: 1px solid #e2e8f0;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-premium-icon:hover {
+                transform: scale(1.1);
+                background: #f7fafc;
+            }
+
+            .btn-danger-icon {
+                color: #e53e3e;
+                border-color: #fed7d7;
+            }
+
+            .btn-danger-icon:hover {
+                background: #e53e3e;
+                color: white;
+            }
+
+            .btn-edit {
+                color: #3182ce;
+                border-color: #bee3f8;
+            }
+
+            .btn-edit:hover {
+                background: #3182ce;
+                color: white;
+            }
+
+            /* Image Preview */
+            .image-preview {
+                text-align: center;
+            }
+
+            .preview-thumbnail {
+                max-width: 200px;
+                max-height: 150px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Badges */
+            .badge-premium-count {
+                background: var(--primary-gradient);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-weight: 600;
+            }
+
+            /* Alerts */
+            .alert-premium-success {
+                background: var(--success-gradient);
+                color: white;
+                border: none;
+                border-radius: 15px;
+                padding: 1rem 1.5rem;
+            }
+
+            .alert-premium-error {
+                background: var(--danger-gradient);
+                color: white;
+                border: none;
+                border-radius: 15px;
+                padding: 1rem 1.5rem;
+            }
+
+            /* Empty State */
+            .empty-seo-state {
+                padding: 3rem 2rem;
+            }
+
+            /* Modal Styles */
+            .premium-modal {
+                border-radius: 20px;
+                border: none;
+                box-shadow: var(--premium-shadow);
+            }
+
+            .premium-modal-header {
+                background: var(--primary-gradient);
+                color: white;
+                border-radius: 20px 20px 0 0;
+                padding: 1.5rem 2rem;
+                border: none;
+            }
+
+            .premium-modal-body {
+                padding: 2rem;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .premium-modal-footer {
+                border-radius: 0 0 20px 20px;
+                padding: 1.5rem 2rem;
+                border-top: 1px solid var(--premium-border);
+            }
+
+            /* Character counter */
+            .text-success {
+                color: #48bb78 !important;
+            }
+
+            .text-warning {
+                color: #ed8936 !important;
+            }
+
+            .text-danger {
+                color: #f56565 !important;
+            }
+        </style>
+
+        <script>
+            // Image preview function
+            function previewImage(input, previewId) {
+                const preview = document.getElementById(previewId);
+                const previewImage = preview.querySelector('img');
+
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImage.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            // Character counter for description
+            function setupCharacterCounter(textareaId, counterId) {
+                const textarea = document.getElementById(textareaId);
+                const counter = document.getElementById(counterId);
+
+                if (textarea && counter) {
+                    textarea.addEventListener('input', function () {
+                        const length = this.value.length;
+                        counter.textContent = length + ' characters';
+
+                        if (length < 120) {
+                            counter.className = 'text-danger';
+                        } else if (length < 150) {
+                            counter.className = 'text-warning';
+                        } else if (length <= 160) {
+                            counter.className = 'text-success';
+                        } else {
+                            counter.className = 'text-danger';
+                        }
+                    });
+
+                    // Trigger initial count
+                    textarea.dispatchEvent(new Event('input'));
+                }
+            }
+
+            // Open edit modal
+            function openEditModal(seo) {
+                // Set form values
+                document.getElementById('editPageName').value = seo.page_name;
+                document.getElementById('editTitle').value = seo.title || '';
+                document.getElementById('editDescription').value = seo.description || '';
+                document.getElementById('editKeywords').value = seo.keywords || '';
+                document.getElementById('editOgTitle').value = seo.og_title || '';
+                document.getElementById('editOgDescription').value = seo.og_description || '';
+                document.getElementById('editTwitterTitle').value = seo.twitter_title || '';
+                document.getElementById('editTwitterDescription').value = seo.twitter_description || '';
+
+                // Set form action
+                document.getElementById('editSeoForm').action = `/admin/seo-settings/${seo.id}/update`;
+
+                // Set preview images
+                const ogPreview = document.getElementById('editOgPreviewImage');
+                const twitterPreview = document.getElementById('editTwitterPreviewImage');
+
+                if (seo.og_image) {
+                    ogPreview.src = seo.og_image;
+                    document.getElementById('editOgPreview').style.display = 'block';
+                } else {
+                    document.getElementById('editOgPreview').style.display = 'none';
+                }
+
+                if (seo.twitter_image) {
+                    twitterPreview.src = seo.twitter_image;
+                    document.getElementById('editTwitterPreview').style.display = 'block';
+                } else {
+                    document.getElementById('editTwitterPreview').style.display = 'none';
+                }
+
+                // Setup character counter
+                setupCharacterCounter('editDescription', 'editDescCounter');
+
+                // Show modal
+                const editModal = new bootstrap.Modal(document.getElementById('editSeoModal'));
+                editModal.show();
+            }
+
+            // Confirm delete
+            function confirmDelete(seoId, pageName) {
+                document.getElementById('deletePageName').textContent = pageName;
+                document.getElementById('deleteForm').action = `/admin/seo-settings/${seoId}/delete`;
+
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                deleteModal.show();
+            }
+
+            // Auto-hide alerts and initialize
+            document.addEventListener('DOMContentLoaded', function () {
+                // Auto-hide alerts
+                const alerts = document.querySelectorAll('.alert-premium-success, .alert-premium-error');
+                alerts.forEach(alert => {
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            const bsAlert = new bootstrap.Alert(alert);
+                            bsAlert.close();
+                        }
+                    }, 5000);
+                });
+
+                // Setup character counters
+                setupCharacterCounter('description', 'descCounter');
+            });
+        </script>
+
+        <%- include('../layouts/admin_layouts_footer') %>

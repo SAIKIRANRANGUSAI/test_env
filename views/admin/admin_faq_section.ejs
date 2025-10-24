@@ -1,0 +1,556 @@
+<%- include('../layouts/admin_layouts_header', { title: 'Admin | FAQ Section', currentPage: 'faq_section' }) %>
+<%- include('../layouts/admin_layouts_sidebar', { currentPage: 'faq_section' }) %>
+
+<div class="admin-container">
+    <% if (message) { %>
+        <div class="alert-success" role="alert">
+            <span class="alert-icon">✓</span>
+            <%= message %>
+            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+    <% } %>
+
+    <div class="page-header">
+        <h1 class="page-title">FAQ Section Management</h1>
+        <p class="page-subtitle">Manage FAQ section and individual FAQs.</p>
+    </div>
+
+    <!-- Section Edit Form -->
+   <!-- Add / Edit FAQ Form -->
+    <section class="form-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <% if (editFaq) { %>
+                    Edit FAQ
+                <% } else { %>
+                    Add New FAQ
+                <% } %>
+            </h2>
+            <p class="section-description">
+                <% if (editFaq) { %>
+                    Update existing FAQ details
+                <% } else { %>
+                    Add a new frequently asked question to the website
+                <% } %>
+            </p>
+        </div>
+
+        <form action="<%= editFaq ? '/admin/faq/' + editFaq.id + '/edit' : '/admin/faq/add' %>" method="POST">
+            <!-- Question -->
+            <div class="form-group">
+                <label for="question">Question</label>
+                <div class="input-wrapper">
+                    <input type="text" id="question" name="question" 
+                           value="<%= editFaq ? editFaq.question : '' %>" 
+                           placeholder="What types of loans do you offer?" maxlength="150" required>
+                    <span class="char-counter">0/150</span>
+                </div>
+                <div class="form-hint">Recommended: max 150 characters</div>
+            </div>
+
+            <!-- Answer -->
+            <div class="form-group">
+                <label for="answer">Answer</label>
+                <div class="input-wrapper">
+                    <textarea id="answer" name="answer" rows="4"
+                              placeholder="We offer a wide range of loan options including personal loans, business loans, home loans, and education loans to meet your financial needs."
+                              maxlength="500" required><%= editFaq ? editFaq.answer : '' %></textarea>
+                    <span class="char-counter">0/500</span>
+                </div>
+                <div class="form-hint">Recommended: max 500 characters</div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    <% if (editFaq) { %>
+                        Update FAQ
+                    <% } else { %>
+                        Add FAQ
+                    <% } %>
+                </button>
+                <% if (editFaq) { %>
+                    <a href="/admin/faq_section" class="btn-secondary">Cancel</a>
+                <% } else { %>
+                    <button type="reset" class="btn-secondary">Reset</button>
+                <% } %>
+            </div>
+        </form>
+    </section>
+</div> 
+
+    <!-- FAQs Table -->
+    <section class="form-section">
+        <div class="section-header">
+            <h2 class="section-title">Manage FAQs</h2>
+            <p class="section-description">View and manage all frequently asked questions.</p>
+        </div>
+
+        <div class="testimonials-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Answer</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% faqs.forEach(f => { %>
+                        <tr>
+                            <td class="question-cell"><%= f.question %></td>
+                            <td class="content-cell"><%= f.answer %></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="/admin/faq/<%= f.id %>/edit" class="btn-edit">Edit</a>
+                                    <a href="/admin/faq/<%= f.id %>/delete" class="btn-delete" onclick="return confirm('Are you sure you want to delete this FAQ?');">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    
+
+
+<div class="section-form">
+        <section class="form-section">
+            <div class="section-header">
+                <h2 class="section-title">Edit FAQ Section</h2>
+                <p class="section-description">Update the main FAQ section content.</p>
+            </div>
+
+            <form action="/admin/faq_section/update" method="POST">
+                <!-- Sub Title -->
+                <div class="form-group">
+                    <label for="section_subtitle">Sub Title</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="section_subtitle" name="section_subtitle" 
+                               value="<%= section.section_subtitle || '' %>" 
+                               placeholder="Frequently Asked Questions" maxlength="60" required>
+                        <span class="char-counter">0/60</span>
+                    </div>
+                    <div class="form-hint">Recommended: max 60 characters</div>
+                </div>
+
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="section_title">Title</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="section_title" name="section_title" 
+                               value="<%= section.section_title || '' %>" 
+                               placeholder="Find Answers to Common Questions" maxlength="100" required>
+                        <span class="char-counter">0/100</span>
+                    </div>
+                    <div class="form-hint">Recommended: max 100 characters</div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="section_description">Description</label>
+                    <div class="input-wrapper">
+                        <textarea id="section_description" name="section_description" rows="4"
+                                  placeholder="Browse through our frequently asked questions to find quick answers to common queries about our services and processes."
+                                  maxlength="300" required><%= section.section_description || '' %></textarea>
+                        <span class="char-counter">0/300</span>
+                    </div>
+                    <div class="form-hint">Recommended: max 300 characters</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Update Section</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+<style>
+    .admin-container {
+        padding: 32px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        min-height: calc(100vh - 120px);
+    }
+
+    .page-header {
+        margin-bottom: 40px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+    }
+
+    .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .alert-success {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        padding: 16px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .alert-icon {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .alert-close {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0 4px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .alert-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-form {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .form-section {
+        background: #f9fafb;
+        padding: 32px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        position: relative;
+    }
+
+    .section-header {
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+    }
+
+    .section-description {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+        font-weight: 400;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        background: #ffffff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .char-counter {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 500;
+        background: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .form-group input[type="text"]:focus + .char-counter,
+    .form-group textarea:focus + .char-counter {
+        color: #3b82f6;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+        font-style: normal;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 20px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    /* Table Styles */
+    .testimonials-table {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .table th {
+        background: #f9fafb;
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+    }
+
+    .table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: middle;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .question-cell {
+        font-weight: 600;
+        color: #1f2937;
+        max-width: 250px;
+        word-wrap: break-word;
+    }
+
+    .content-cell {
+        max-width: 400px;
+        word-wrap: break-word;
+        color: #6b7280;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-edit {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: #d97706;
+    }
+
+    .btn-delete {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #dc2626;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+        .admin-container {
+            margin-left: 20px;
+            margin-right: 20px;
+            padding: 24px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-container {
+            margin-left: 0;
+            margin-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+        }
+
+        .section-form {
+            gap: 24px;
+        }
+
+        .form-section {
+            padding: 24px;
+        }
+
+        .table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            text-align: center;
+        }
+
+        .question-cell,
+        .content-cell {
+            max-width: 200px;
+        }
+    }
+</style>
+
+<script>
+    // Character counter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const fields = [
+            { id: 'section_subtitle', max: 60 },
+            { id: 'section_title', max: 100 },
+            { id: 'section_description', max: 300 },
+            { id: 'question', max: 150 },
+            { id: 'answer', max: 500 }
+        ];
+
+        fields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                updateCounter(field.id, field.max);
+                element.addEventListener('input', () => updateCounter(field.id, field.max));
+            }
+        });
+
+        function updateCounter(fieldId, maxLength) {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
+            const counter = field.parentNode.querySelector('.char-counter');
+            if (!counter) return;
+            const currentLength = field.value.length;
+            counter.textContent = `${currentLength}/${maxLength}`;
+            
+            if (currentLength > maxLength * 0.9) {
+                counter.style.color = '#ef4444';
+            } else {
+                counter.style.color = '#9ca3af';
+            }
+        }
+    });
+</script>
+
+<%- include('../layouts/admin_layouts_footer') %>

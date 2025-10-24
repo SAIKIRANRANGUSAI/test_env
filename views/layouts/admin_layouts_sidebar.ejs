@@ -1,0 +1,445 @@
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <img src="/images/logo.png" alt="Logo">
+        </div>
+        <h2>My Loan Bazar</h2>
+        <button class="sidebar-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-menu">
+        <div class="menu-section">
+            <div class="menu-label">Main</div>
+            <a href="/admin/dashboard"
+   class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'dashboard') ? 'active' : '' %>">
+  <div class="menu-icon">
+    <i class="fas fa-tachometer-alt"></i>
+  </div>
+  <span class="menu-text">Dashboard</span>
+  <% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
+    <span class="badge"><%= unreadCount %></span>
+  <% } %>
+</a>
+
+
+            <a href="/admin/home"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'home') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span class="menu-text">Home</span>
+            </a>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">Content</div>
+            <a href="/admin/about-us"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'about-us') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <span class="menu-text">About Us</span>
+            </a>
+            
+            <a href="/admin/services"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'services') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-concierge-bell"></i>
+                </div>
+                <span class="menu-text">Services</span>
+            </a>
+
+            <a href="/admin/why_choose_us"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'why_choose_us') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <span class="menu-text">Why Choose Us</span>
+            </a>
+
+            <a href="/admin/testimonials"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'testimonials') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <span class="menu-text">Testimonials</span>
+            </a>
+
+            <a href="/admin/faq_section"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'faq_section') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <span class="menu-text">FAQ Section</span>
+            </a>
+
+            <a href="/admin/enquiry"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'enquiry') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <span class="menu-text">enquiry</span>
+            </a>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">Settings</div>
+            <a href="/admin/settings"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'settings') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <span class="menu-text">Settings</span>
+            </a>
+            
+            <a href="/admin/seo-settings"
+                class="menu-item <%= (typeof currentPage !== 'undefined' && currentPage === 'seo-settings') ? 'active' : '' %>">
+                <div class="menu-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <span class="menu-text">SEO Settings</span>
+            </a>
+        </div>
+
+        <div class="menu-section">
+            <a href="/admin/logout" class="menu-item logout-btn" onclick="return confirm('Are you sure you want to logout?');">
+                <div class="menu-icon">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <span class="menu-text">Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <div class="user-avatar">
+                <img src="/images/admin-avatar.png" alt="User">
+            </div>
+            <div class="user-details">
+                <h4>Admin User</h4>
+                <span>Administrator</span>
+            </div>
+        </div>
+    </div> -->
+</div>
+
+<style>
+    /* Sidebar */
+    .sidebar {
+        width: var(--sidebar-width);
+        background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        z-index: 1000;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+        position: fixed;
+        left: 0;
+        top: 0;
+        overflow: hidden;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .sidebar-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        margin-right: 12px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        padding: 4px;
+    }
+    .menu-item .badge {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 7px;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+
+    .sidebar-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .sidebar-header h2 {
+        font-size: 18px;
+        font-weight: 600;
+        flex: 1;
+    }
+
+    .sidebar-close {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .sidebar-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-menu {
+        padding: 20px 0;
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .menu-section {
+        margin-bottom: 10px;
+    }
+
+    .menu-label {
+        padding: 10px 20px;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        color: white;
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+        gap: 12px;
+    }
+
+    .menu-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .menu-item.active {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .menu-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: var(--accent);
+    }
+
+    .menu-icon {
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .menu-text {
+        flex: 1;
+        font-weight: 500;
+    }
+
+    .menu-badge {
+        background: var(--accent);
+        color: white;
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .logout-btn {
+        margin-top: auto;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .logout-btn:hover {
+        background: rgba(178, 34, 34, 0.2);
+        color: white;
+    }
+
+    .sidebar-footer {
+        padding: 16px 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-user {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 12px;
+        overflow: hidden;
+    }
+
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .user-details h4 {
+        font-size: 14px;
+        margin-bottom: 2px;
+        font-weight: 600;
+    }
+
+    .user-details span {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Responsive Sidebar */
+    @media (max-width: 1200px) {
+        .sidebar {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar .menu-label,
+        .sidebar .menu-text,
+        .sidebar .menu-badge,
+        .sidebar-header h2,
+        .sidebar .user-details {
+            display: none;
+        }
+        
+        .sidebar .menu-item {
+            justify-content: center;
+            padding: 16px;
+        }
+        
+        .sidebar .menu-icon {
+            margin-right: 0;
+            font-size: 20px;
+        }
+        
+        .sidebar-footer {
+            padding: 16px 10px;
+        }
+        
+        .sidebar-user {
+            justify-content: center;
+        }
+        
+        .user-avatar {
+            margin-right: 0;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .sidebar {
+            left: -280px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+        
+        .sidebar-close {
+            display: flex;
+        }
+    }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.querySelector('.sidebar');
+    const toggleBtn = document.querySelector('.toggle-sidebar');
+    const closeBtn = document.querySelector('.sidebar-close');
+    const overlay = document.querySelector('.overlay');
+    const mainContent = document.querySelector('.main-content-wrapper');
+    const menuItems = document.querySelectorAll('.sidebar .menu-item'); // all links in sidebar
+
+    // Toggle sidebar
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            if (window.innerWidth > 1200) {
+                mainContent.classList.toggle('sidebar-collapsed');
+            }
+        });
+    }
+
+    // Close sidebar via close button
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+
+    // Close sidebar when clicking on overlay
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+
+    // Close sidebar when clicking on any menu item (mobile/tablet)
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 1200) { // only close on smaller screens
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+    });
+
+    // Auto-collapse sidebar on medium screens
+    function handleResize() {
+        if (window.innerWidth <= 1200 && window.innerWidth > 992) {
+            mainContent.classList.add('sidebar-collapsed');
+        } else if (window.innerWidth > 1200) {
+            mainContent.classList.remove('sidebar-collapsed');
+        }
+    }
+
+    // Initial check
+    handleResize();
+
+    // Listen for resize events
+    window.addEventListener('resize', handleResize);
+});
+</script>
+

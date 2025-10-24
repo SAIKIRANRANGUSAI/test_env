@@ -1,0 +1,729 @@
+<%- include('../layouts/admin_layouts_header', { title: 'Admin | Settings', currentPage: 'settings' }) %>
+<%- include('../layouts/admin_layouts_sidebar', { currentPage: 'settings' }) %>
+
+<div class="admin-container">
+    <% if (message) { %>
+        <div class="alert-success" role="alert">
+            <span class="alert-icon">✓</span>
+            <%= message %>
+            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+    <% } %>
+
+    <div class="page-header">
+        <h1 class="page-title">Site Settings</h1>
+        <p class="page-subtitle">Manage your website configuration and admin settings.</p>
+    </div>
+
+    <!-- General Settings Section -->
+    <section class="form-section">
+        <div class="section-header">
+            <h2 class="section-title">General Settings</h2>
+            <p class="section-description">Configure your website basic information and branding.</p>
+        </div>
+
+        <form action="/admin/settings" method="POST" enctype="multipart/form-data">
+            <div class="form-row">
+                <!-- Site Name -->
+                <div class="form-group">
+                    <label for="site_name">Site Name *</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="site_name" name="site_name" 
+                               value="<%= settings.site_name || '' %>" 
+                               placeholder="Enter your site name" required>
+                    </div>
+                </div>
+
+                <!-- Contact Emails -->
+                <div class="form-group">
+                    <label for="emails">Contact Emails</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="emails" name="emails" 
+                               value="<%= settings.emails || '' %>" 
+                               placeholder="email1@example.com, email2@example.com">
+                    </div>
+                    <div class="form-hint">Separate multiple emails with commas</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- Phone Numbers -->
+                <div class="form-group">
+                    <label for="phone_numbers">Phone Numbers</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="phone_numbers" name="phone_numbers" 
+                               value="<%= settings.phone_numbers || '' %>" 
+                               placeholder="+1234567890, +0987654321">
+                    </div>
+                    <div class="form-hint">Separate multiple numbers with commas</div>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <div class="input-wrapper">
+                        <textarea id="address" name="address" rows="3"
+                                  placeholder="Enter your business address"><%= settings.address || '' %></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- Logo Upload -->
+                <div class="form-group">
+                    <label for="logo">Site Logo</label>
+                    <% if (settings.logo_url) { %>
+                        <div class="current-image-preview">
+                            <p class="current-image-label">Current Logo:</p>
+                            <img src="<%= settings.logo_url %>" class="image-preview" alt="Current Logo">
+                        </div>
+                    <% } %>
+                    <div class="input-wrapper">
+                        <input type="file" id="logo" name="logo" accept="image/*">
+                    </div>
+                    <input type="hidden" name="current_logo" value="<%= settings.logo_url %>">
+                    <div class="form-hint">Recommended size: 442 × 147 px for optimal display</div>
+                </div>
+
+                <!-- Favicon Upload -->
+                <div class="form-group">
+                    <label for="favicon">Favicon</label>
+                    <% if (settings.favicon_url) { %>
+                        <div class="current-image-preview">
+                            <p class="current-image-label">Current Favicon:</p>
+                            <img src="<%= settings.favicon_url %>" class="image-preview favicon-preview" alt="Current Favicon">
+                        </div>
+                    <% } %>
+                    <div class="input-wrapper">
+                        <input type="file" id="favicon" name="favicon" accept="image/*">
+                    </div>
+                    <input type="hidden" name="current_favicon" value="<%= settings.favicon_url %>">
+                    <div class="form-hint">Recommended: 32x32 px .ico or .png file</div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save me-2"></i>Update Settings
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Admin Credentials Section -->
+    <section class="form-section">
+        <div class="section-header">
+            <h2 class="section-title">Admin Credentials</h2>
+            <p class="section-description">Update your admin username and password securely.</p>
+        </div>
+
+        <form action="/admin/settings/change-credentials" method="POST" id="credentialsForm">
+            <!-- Current Admin Info -->
+            <div class="current-admin-info">
+                <h6 class="info-title"><i class="fas fa-user me-2"></i>Current Admin Information</h6>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Username:</strong> 
+                        <span class="text-primary"><%= adminInfo.username || 'Not set' %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Account Created:</strong> 
+                        <span class="text-muted"><%= adminInfo.created_at ? new Date(adminInfo.created_at).toLocaleDateString() : 'Unknown' %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- Current Credentials -->
+                <div class="form-group">
+                    <label for="current_username">Current Username *</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="current_username" name="current_username" 
+                               placeholder="Enter current username" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="current_password">Current Password *</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="current_password" name="current_password" 
+                               placeholder="Enter current password" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- New Credentials -->
+                <div class="form-group">
+                    <label for="new_username">New Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="new_username" name="new_username" 
+                               placeholder="Leave blank to keep current username">
+                    </div>
+                    <div class="form-hint">Leave blank to keep current username</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">New Password *</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="new_password" name="new_password" 
+                               placeholder="Enter new password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password *</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirm_password" name="confirm_password" 
+                               placeholder="Confirm new password" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-key me-2"></i>Update Credentials
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Admin Login History Section -->
+    <section class="form-section">
+        <div class="section-header">
+            <h2 class="section-title">Admin Login History</h2>
+            <p class="section-description">Track recent admin login activities and access patterns.</p>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>IP Address</th>
+                        <th>User Agent</th>
+                        <th>Login Date/Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (logins.length > 0) { %>
+                        <% logins.forEach((login, index) => { %>
+                            <tr>
+                                <td class="index-cell"><%= index + 1 + ((currentPage - 1) * 10) %></td>
+                                <td class="username-cell"><span class="badge"><%= login.username %></span></td>
+                                <td class="ip-cell"><code><%= login.ip_address %></code></td>
+                                <td class="user-agent-cell"><%= login.user_agent || '-' %></td>
+                                <td class="date-cell"><%= new Date(login.login_at).toLocaleString() %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="no-data">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p>No login records found</p>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+            <nav class="pagination-nav">
+                <ul class="pagination">
+                    <% for(let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="/admin/settings?page=<%= i %>#login-history"><%= i %></a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        <% } %>
+    </section>
+
+    <!-- Database Backup Section -->
+    <section class="form-section">
+        <div class="section-header">
+            <h2 class="section-title">Database Management</h2>
+            <p class="section-description">Backup and manage your website data securely.</p>
+        </div>
+
+        <div class="backup-section">
+            <div class="backup-info">
+                <h6 class="backup-title">Download Database Backup</h6>
+                <p class="backup-description">Create a backup of your current database for security and migration purposes</p>
+            </div>
+            <div class="backup-action">
+                <a href="/admin/settings/download-db" class="btn-primary">
+                    <i class="fas fa-download me-2"></i>Download Database
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .admin-container {
+        padding: 32px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        min-height: calc(100vh - 120px);
+    }
+
+    .page-header {
+        margin-bottom: 40px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+    }
+
+    .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .alert-success {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        padding: 16px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .alert-icon {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .alert-close {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0 4px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .alert-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-section {
+        background: #f9fafb;
+        padding: 32px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        margin-bottom: 24px;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-header {
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+    }
+
+    .section-description {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+        font-weight: 400;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .form-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"],
+    .form-group input[type="file"],
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        background: #ffffff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="password"]:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 80px;
+        line-height: 1.5;
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+        font-style: normal;
+    }
+
+    /* Current Image Preview */
+    .current-image-preview {
+        margin-bottom: 12px;
+    }
+
+    .current-image-label {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .image-preview {
+        max-width: 150px;
+        height: auto;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .favicon-preview {
+        max-width: 32px;
+    }
+
+    /* Current Admin Info */
+    .current-admin-info {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        margin-bottom: 24px;
+    }
+
+    .info-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .info-item {
+        font-size: 14px;
+    }
+
+    .info-item strong {
+        color: #374151;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 20px;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    /* Table Styles */
+    .table-container {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .table th {
+        background: #f9fafb;
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+        position: sticky;
+        top: 0;
+    }
+
+    .table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .index-cell {
+        font-weight: 600;
+        color: #6b7280;
+        width: 60px;
+    }
+
+    .username-cell .badge {
+        background: #3b82f6;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .ip-cell code {
+        background: #f3f4f6;
+        padding: 4px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        color: #374151;
+    }
+
+    .user-agent-cell {
+        max-width: 200px;
+        word-wrap: break-word;
+        color: #6b7280;
+    }
+
+    .date-cell {
+        color: #374151;
+        white-space: nowrap;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px !important;
+        color: #6b7280;
+    }
+
+    .no-data i {
+        color: #d1d5db;
+        margin-bottom: 8px;
+    }
+
+    /* Pagination */
+    .pagination-nav {
+        margin-top: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .page-item.active .page-link {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+
+    .page-link {
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        color: #374151;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .page-link:hover {
+        background: #f3f4f6;
+    }
+
+    /* Backup Section */
+    .backup-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        padding: 24px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .backup-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 4px 0;
+    }
+
+    .backup-description {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+        .admin-container {
+            margin-left: 20px;
+            margin-right: 20px;
+            padding: 24px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-container {
+            margin-left: 0;
+            margin-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .form-section {
+            padding: 24px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .backup-section {
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .table-container {
+            max-height: 300px;
+        }
+
+        .table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        .user-agent-cell {
+            max-width: 150px;
+        }
+    }
+    .alert-error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #ffffff;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+</style>
+
+<%- include('../layouts/admin_layouts_footer') %>

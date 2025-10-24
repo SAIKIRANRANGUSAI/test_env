@@ -1,0 +1,484 @@
+<%- include('../layouts/admin_layouts_header', { title: 'Admin | Why Choose Us' , currentPage: 'why_choose_us' }) %>
+<%- include('../layouts/admin_layouts_sidebar', { currentPage: 'why_choose_us' }) %>
+
+<div class="admin-container">
+    <% if (message) { %>
+        <div class="alert-success" role="alert">
+            <span class="alert-icon">✓</span>
+            <%= message %>
+            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+    <% } %>
+
+    <div class="page-header">
+        <h1 class="page-title">Why Choose Us Section</h1>
+        <p class="page-subtitle">Manage the Why Choose Us section content and points.</p>
+    </div>
+
+    <form action="/admin/why_choose_us" method="POST" enctype="multipart/form-data" class="section-form">
+        <section class="form-section">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Us Content</h2>
+                <p class="section-description">Update the main content and key points for the Why Choose Us section.</p>
+            </div>
+
+            <!-- Section Heading -->
+            <div class="form-group">
+                <label for="section_heading">Section Heading</label>
+                <div class="input-wrapper">
+                    <input type="text" id="section_heading" name="section_heading"
+                        value="<%= whyChooseUs.section_heading || '' %>"
+                        placeholder="Experience Excellence in Loan Review and Comparison" maxlength="60" required>
+                    <span class="char-counter">0/60</span>
+                </div>
+                <div class="form-hint">Recommended: max 60 characters</div>
+            </div>
+
+            <!-- Section Description -->
+            <div class="form-group">
+                <label for="section_description">Section Description</label>
+                <div class="input-wrapper">
+                    <textarea id="section_description" name="section_description" rows="4"
+                        placeholder="Our dedicated team of experts conducts thorough research and analysis to provide you with comprehensive and unbiased reviews of various loan options."><%= whyChooseUs.section_description || '' %></textarea>
+                </div>
+            </div>
+
+            <!-- Section Image -->
+            <div class="form-group">
+                <label for="section_image">Section Image</label>
+                <div class="image-upload-wrapper">
+                    <% if (whyChooseUs.section_image) { %>
+                        <div class="image-preview">
+                            <img src="<%= whyChooseUs.section_image %>" alt="Section Image">
+                        </div>
+                        <input type="hidden" name="current_image" value="<%= whyChooseUs.section_image || '' %>">
+                    <% } else { %>
+                        <div class="image-placeholder">
+                            <span class="placeholder-icon">📷</span>
+                            <p>No image selected</p>
+                        </div>
+                    <% } %>
+                    <input type="file" id="section_image" name="section_image" accept="image/*">
+                    <small class="image-hint">Recommended: 600 × 600 px</small>
+                </div>
+            </div>
+
+            <!-- List Points -->
+            <div class="points-section">
+                <h3 class="points-title">List Points</h3>
+                
+                <div class="form-group">
+                    <label for="point_1">Point 1</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="point_1" name="point_1"
+                            value="<%= whyChooseUs.point_1 || '' %>"
+                            placeholder="Comprehensive and Reviews" maxlength="60" required>
+                        <span class="char-counter">0/60</span>
+                    </div>
+                    <div class="form-hint">Recommended: max 60 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="point_2">Point 2</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="point_2" name="point_2"
+                            value="<%= whyChooseUs.point_2 || '' %>"
+                            placeholder="Expert Guidance and Insights" maxlength="60" required>
+                        <span class="char-counter">0/60</span>
+                    </div>
+                    <div class="form-hint">Recommended: max 60 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="point_3">Point 3</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="point_3" name="point_3"
+                            value="<%= whyChooseUs.point_3 || '' %>"
+                            placeholder="User-Friendly Comparison" maxlength="60" required>
+                        <span class="char-counter">0/60</span>
+                    </div>
+                    <div class="form-hint">Recommended: max 60 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="point_4">Point 4</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="point_4" name="point_4"
+                            value="<%= whyChooseUs.point_4 || '' %>"
+                            placeholder="Trusted User Reviews" maxlength="60" required>
+                        <span class="char-counter">0/60</span>
+                    </div>
+                    <div class="form-hint">Recommended: max 60 characters</div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="reset" class="btn-secondary">Reset</button>
+            </div>
+        </section>
+    </form>
+</div>
+
+<style>
+    .admin-container {
+        padding: 32px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        min-height: calc(100vh - 120px);
+    }
+
+    .page-header {
+        margin-bottom: 40px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+    }
+
+    .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .alert-success {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        padding: 16px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .alert-icon {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .alert-close {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0 4px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .alert-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-form {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .form-section {
+        background: #f9fafb;
+        padding: 32px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        position: relative;
+    }
+
+    .section-header {
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+    }
+
+    .section-description {
+        font-size: 14px;
+        color: #6b7280;
+        margin: 0;
+        font-weight: 400;
+    }
+
+    /* Points Section */
+    .points-section {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        margin-top: 24px;
+    }
+
+    .points-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group input[type="text"],
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        background: #ffffff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .char-counter {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 500;
+        background: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .form-group input[type="text"]:focus + .char-counter,
+    .form-group textarea:focus + .char-counter {
+        color: #3b82f6;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
+        font-style: normal;
+    }
+
+    .image-upload-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .image-preview,
+    .image-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        background: #f9fafb;
+        transition: border-color 0.2s;
+    }
+
+    .image-preview:hover,
+    .image-placeholder:hover {
+        border-color: #3b82f6;
+    }
+
+    .image-preview img {
+        max-width: 200px;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+
+    .image-placeholder .placeholder-icon {
+        font-size: 48px;
+        margin-bottom: 8px;
+        opacity: 0.5;
+    }
+
+    .image-placeholder p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .form-group input[type="file"] {
+        padding: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: #ffffff;
+    }
+
+    .image-hint {
+        font-size: 12px;
+        color: #6b7280;
+        text-align: center;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 20px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+        .admin-container {
+            margin-left: 20px;
+            margin-right: 20px;
+            padding: 24px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-container {
+            margin-left: 0;
+            margin-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+        }
+
+        .section-form {
+            gap: 24px;
+        }
+
+        .form-section {
+            padding: 24px;
+        }
+
+        .points-section {
+            padding: 16px;
+        }
+    }
+</style>
+
+<script>
+    // Character counter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const fields = [
+            { id: 'section_heading', max: 60 },
+            { id: 'point_1', max: 60 },
+            { id: 'point_2', max: 60 },
+            { id: 'point_3', max: 60 },
+            { id: 'point_4', max: 60 }
+        ];
+
+        fields.forEach(field => updateCounter(field.id, field.max));
+
+        fields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                element.addEventListener('input', () => updateCounter(field.id, field.max));
+            }
+        });
+
+        function updateCounter(fieldId, maxLength) {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
+            const counter = field.parentNode.querySelector('.char-counter');
+            if (!counter) return;
+            const currentLength = field.value.length;
+            counter.textContent = `${currentLength}/${maxLength}`;
+            
+            if (currentLength > maxLength * 0.9) {
+                counter.style.color = '#ef4444';
+            } else {
+                counter.style.color = '#9ca3af';
+            }
+        }
+    });
+</script>
+
+<%- include('../layouts/admin_layouts_footer') %>

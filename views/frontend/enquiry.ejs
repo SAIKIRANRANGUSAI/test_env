@@ -1,0 +1,761 @@
+<%- include('./partials/header') %>
+<style>
+  *{
+    padding: unset;
+  }
+  #stateSelect, #districtSelect {
+    display: block !important;
+    visibility: visible !important;
+    min-height: 40px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+  }
+  .form-control {
+    font-size: 16px;
+  }
+  .form-select {
+    appearance: auto;
+  }
+  .is-invalid {
+    border-color: #dc3545 !important;
+  }
+  .invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+  }
+  .was-validated .form-control:invalid ~ .invalid-feedback,
+  .was-validated .form-select:invalid ~ .invalid-feedback {
+    display: block;
+  }
+  .gender-btn.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+  .institution-label.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+  .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #0d6efd;
+    display: none;
+    z-index: 1000;
+  }
+  .loading-spinner .bi-arrow-repeat {
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+<!-- Banner Start -->
+<section class="banner">
+  <div class="container">
+    <div class="row gy-4 gy-sm-0 align-items-center">
+      <div class="col-12 col-sm-12">
+        <div class="banner__content">
+          <h1 class="banner__title display-4 wow fadeInLeft" data-wow-duration="0.8s">Enquiry</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb wow fadeInRight" data-wow-duration="0.8s">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="/services">Services</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Enquiry</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Banner End -->
+
+<section class="enquiry-form">
+  <div class="container">
+    <div class="row align-items-start justify-content-between">
+      <div class="col-md-4">
+        <% if(service.icon_image && service.icon_image !== '') { %>
+          <img src="<%= service.icon_image %>" alt="<%= service.heading %>" class="img-fluid" onerror="this.src='/images/fallback-service.png'">
+        <% } else { %>
+          <img src="/images/fallback-service.png" alt="<%= service.heading %>" class="img-fluid">
+        <% } %>
+        <div class="service-info mt-4">
+          <h4><%= service.heading %></h4>
+          <% if(service.short_description) { %>
+            <p class="text-muted"><%= service.short_description %></p>
+          <% } %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h3 class="modal-title mb-5 text-center" id="enquiryModalLabel">Enquiry Form - <%- service.heading %></h3>
+        <!-- <form id="enquiryForm" action="/enquiry/<%= service.id %>" method="POST" novalidate> -->
+          <form id="enquiryForm" action="/enquiry<%= service.id && service.id > 0 ? '/' + service.id : '' %>
+" method="POST" novalidate>
+
+          <!-- Step 1 -->
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <div class="enquiry-step" data-step="1">
+                <div class="mb-3">
+                  <label class="form-label">Name (As per PAN Card):</label>
+                  <input type="text" class="form-control" name="name" required 
+                         pattern="[A-Za-z\s]{2,50}" 
+                         title="Name should contain only letters and spaces (2-50 characters)" />
+                  <div class="invalid-feedback">
+                    Please enter a valid name (2-50 characters, letters and spaces only)
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Mobile Number:</label>
+                  <input type="tel" class="form-control" name="mobile" required 
+                         pattern="[6-9][0-9]{9}" 
+                         title="Please enter a valid 10-digit mobile number starting with 6-9" />
+                  <div class="invalid-feedback">
+                    Please enter a valid 10-digit mobile number starting with 6-9
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Present Address (With Pin Code):</label>
+                  <textarea class="form-control" name="address" rows="3" required
+                            minlength="10" maxlength="500"></textarea>
+                  <div class="invalid-feedback">
+                    Please enter your complete address (minimum 10 characters)
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">State:</label>
+                    <select class="form-control form-select" id="stateSelect" name="state_id" required>
+                      <option value="">Select State</option>
+                      <% states.forEach(state => { %>
+                        <option value="<%= state.id %>"><%= state.name %></option>
+                      <% }); %>
+                    </select>
+                    <div class="invalid-feedback">
+                      Please select your state
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">District:</label>
+                    <select class="form-control form-select" id="districtSelect" name="district_id" required>
+                      <option value="">Select District</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Please select your district
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Pincode:</label>
+                  <input type="text" class="form-control" name="pincode" 
+                         pattern="[1-9][0-9]{5}" 
+                         maxlength="6" required 
+                         title="Please enter a valid 6-digit pincode" />
+                  <div class="invalid-feedback">
+                    Please enter a valid 6-digit pincode
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button type="button" class="btn btn_theme btn_theme_active next-step">Continue</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <div class="enquiry-step d-none" data-step="2">
+                <div class="mb-3">
+                  <label class="form-label">Gender:</label>
+                  <div class="d-flex gap-3">
+                    <label class="btn btn-outline-secondary gender-btn">
+                      <input type="radio" name="gender" value="Male" required hidden />
+                      <i class="bi bi-gender-male" style="font-size:2rem;"></i> Male
+                    </label>
+                    <label class="btn btn-outline-secondary gender-btn">
+                      <input type="radio" name="gender" value="Female" required hidden />
+                      <i class="bi bi-gender-female" style="font-size:2rem;"></i> Female
+                    </label>
+                  </div>
+                  <div class="invalid-feedback" id="genderError">
+                    Please select your gender
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary prev-step">Back</button>
+                  <button type="button" class="btn btn_theme btn_theme_active next-step">Continue</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Step 3 -->
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <div class="enquiry-step d-none" data-step="3">
+                <div class="mb-3">
+                  <label class="form-label">Company Name:</label>
+                  <input type="text" class="form-control" name="company_name" required
+                         minlength="2" maxlength="100" />
+                  <div class="invalid-feedback">
+                    Please enter your company name (2-100 characters)
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Loan Amount Required:</label>
+                  <input type="number" class="form-control" name="loan_amount" required 
+                         min="10000" max="100000000" step="1"
+                         title="Loan amount must be between ₹10,000 and ₹10,00,00,000" />
+                  <div class="invalid-feedback">
+                    Loan amount must be between ₹10,000 and ₹10,00,00,000
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Monthly Salary:</label>
+                  <input type="number" class="form-control" name="monthly_salary" required 
+                         min="0" max="10000000" step="1"
+                         title="Monthly salary must be between ₹0 and ₹1,00,00,000" />
+                  <div class="invalid-feedback">
+                    Monthly salary must be between ₹0 and ₹1,00,00,000
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Existing EMIs (Monthly Amount):</label>
+                  <input type="number" class="form-control" name="emis" required 
+                         min="0" max="1000000" step="1"
+                         title="EMI amount must be between ₹0 and ₹10,00,000" />
+                  <div class="invalid-feedback">
+                    EMI amount must be between ₹0 and ₹10,00,000
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Company Address:</label>
+                  <textarea class="form-control" name="company_address" rows="3" required
+                            minlength="10" maxlength="500"></textarea>
+                  <div class="invalid-feedback">
+                    Please enter your company address (minimum 10 characters)
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary prev-step">Back</button>
+                  <button type="button" class="btn btn_theme btn_theme_active next-step">Continue</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Step 4 -->
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <div class="enquiry-step d-none" data-step="4">
+                <div class="mb-3">
+                  <label class="form-label">Preferred Bank/NBFC:</label>
+                  <div class="d-flex gap-3 align-items-center">
+                    <label class="btn btn-outline-secondary p-2 mb-0 preferred-type-btn">
+                      <input type="radio" name="preferred_type" value="Bank" required /> Bank
+                    </label>
+                    <label class="btn btn-outline-secondary p-2 mb-0 preferred-type-btn">
+                      <input type="radio" name="preferred_type" value="NBFC" required /> NBFC
+                    </label>
+                  </div>
+                  <div class="invalid-feedback" id="preferredTypeError">
+                    Please select Bank or NBFC
+                  </div>
+                </div>
+                <!-- Institution list -->
+                <div id="institutionList" class="mb-3 d-none">
+                  <label class="form-label">Choose Institution:</label>
+                  <div class="d-flex flex-wrap gap-2" id="institutionsContainer">
+                    <!-- Banks group -->
+                    <div id="banksContainer" class="d-flex flex-wrap gap-2 d-none">
+                      <% institutions.filter(inst => inst.type === 'Bank').forEach(inst => { %>
+                        <label class="institution-label btn btn-outline-secondary d-flex align-items-center gap-2 p-2"
+                               title="<%= inst.name %>"
+                               data-bs-toggle="popover"
+                               data-bs-trigger="hover focus"
+                               data-bs-content="<%= inst.details ? inst.details.replace(/\n/g, '&#10;') : 'No details available' %>">
+                          <input type="radio" class="institution-radio" name="institution" value="<%= inst.name %>" style="display:none;" />
+                          <% if (inst.logo && inst.logo !== '') { %>
+                            <img src="<%= inst.logo %>" alt="<%= inst.name %>" style="height:32px" onerror="this.src='/images/fallback-logo.png'">
+                          <% } else { %>
+                            <img src="/images/fallback-logo.png" alt="<%= inst.name %>" style="height:32px">
+                          <% } %>
+                          <span><%= inst.name %></span>
+                        </label>
+                      <% }); %>
+                    </div>
+                    <!-- NBFCs group -->
+                    <div id="nbfcContainer" class="d-flex flex-wrap gap-2 d-none">
+                      <% institutions.filter(inst => inst.type === 'NBFC').forEach(inst => { %>
+                        <label class="institution-label btn btn-outline-secondary d-flex align-items-center gap-2 p-2"
+                               title="<%= inst.name %>"
+                               data-bs-toggle="popover"
+                               data-bs-trigger="hover focus"
+                               data-bs-content="<%= inst.details ? inst.details.replace(/\n/g, '&#10;') : 'No details available' %>">
+                          <input type="radio" class="institution-radio" name="institution" value="<%= inst.name %>" style="display:none;" />
+                          <% if (inst.logo && inst.logo !== '') { %>
+                            <img src="<%= inst.logo %>" alt="<%= inst.name %>" style="height:32px" onerror="this.src='/images/fallback-logo.png'">
+                          <% } else { %>
+                            <img src="/images/fallback-logo.png" alt="<%= inst.name %>" style="height:32px">
+                          <% } %>
+                          <span><%= inst.name %></span>
+                        </label>
+                      <% }); %>
+                    </div>
+                  </div>
+                  <input type="hidden" name="preferred_institution" id="preferredInstitution" />
+                  <div class="invalid-feedback" id="institutionError">
+                    Please select an institution
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary prev-step">Back</button>
+                  <button type="button" class="btn btn_theme btn_theme_active" id="showOtpStep">Submit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- OTP Step -->
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <div class="enquiry-step d-none" data-step="5">
+                <div class="mb-3">
+                  <label class="form-label">Enter OTP sent to your mobile number:</label>
+                  <input type="text" class="form-control" name="otp" maxlength="6" 
+                         pattern="[0-9]{6}" required 
+                         title="Please enter a valid 6-digit OTP" />
+                  <div class="invalid-feedback">
+                    Please enter a valid 6-digit OTP
+                  </div>
+                  <div class="form-text">(For demo purposes, enter any 6-digit number)</div>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary prev-step">Back</button>
+                  <button type="submit" class="btn btn_theme btn_theme_active">Verify & Submit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Success Step -->
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <div class="enquiry-step d-none text-center" data-step="6">
+                <div class="mb-4">
+                  <i class="bi bi-check-circle-fill text-success" style="font-size:3rem;"></i>
+                  <h4 class="mt-3">Thank you!</h4>
+                  <p>Your enquiry has been submitted successfully.<br>We will contact you soon.</p>
+                </div>
+                <a href="/" class="btn btn_theme btn_theme_active">Back to Home</a>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+// Multi-step form logic
+document.addEventListener('DOMContentLoaded', function () {
+  const steps = document.querySelectorAll('.enquiry-step');
+  const form = document.getElementById('enquiryForm');
+  const stateSelect = document.getElementById('stateSelect');
+  const districtSelect = document.getElementById('districtSelect');
+  let currentStep = 0;
+  let isStateChangeBound = false;
+  let popoversInitialized = false;
+
+  // Loading spinner for district fetch
+  const districtLoading = document.createElement('div');
+  districtLoading.className = 'loading-spinner';
+  districtLoading.style = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: #0d6efd; display: none;';
+  districtLoading.innerHTML = '<i class="bi bi-arrow-repeat"></i> Loading...';
+  if (districtSelect && districtSelect.parentElement) {
+    districtSelect.parentElement.appendChild(districtLoading);
+  }
+
+  // Show specific step
+  function showStep(idx) {
+    steps.forEach((step, i) => {
+      step.classList.toggle('d-none', i !== idx);
+    });
+    currentStep = idx;
+    
+    // Initialize popovers only once when step 4 is shown
+    if (idx === 3 && !popoversInitialized) {
+      setTimeout(() => {
+        updateInstitutionVisibility();
+        initPopovers();
+      }, 100);
+    }
+  }
+
+  // Populate districts via AJAX with loading indicator
+  function populateDistricts(stateId) {
+    if (!districtSelect) {
+      console.error('District select element not found');
+      return;
+    }
+
+    // Don't fetch if no stateId or stateId is empty
+    if (!stateId || stateId === '') {
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      districtSelect.disabled = false;
+      districtLoading.style.display = 'none';
+      return;
+    }
+
+    districtLoading.style.display = 'block';
+    districtSelect.disabled = true;
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    fetch(`/districts/${stateId}`, { signal: controller.signal })
+      .then(response => {
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return response.json();
+      })
+      .then(districts => {
+        districtSelect.innerHTML = '<option value="">Select District</option>';
+
+        if (Array.isArray(districts) && districts.length > 0) {
+          const uniqueDistricts = [];
+          const seenNames = new Set();
+          districts.forEach(district => {
+            if (!seenNames.has(district.name)) {
+              seenNames.add(district.name);
+              uniqueDistricts.push(district);
+            }
+          });
+
+          uniqueDistricts.sort((a, b) => a.name.localeCompare(b.name));
+          uniqueDistricts.forEach(district => {
+            const option = document.createElement('option');
+            option.value = district.id;
+            option.textContent = district.name;
+            districtSelect.appendChild(option);
+          });
+        } else {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = 'No districts available';
+          districtSelect.appendChild(option);
+        }
+        districtSelect.disabled = false;
+        districtLoading.style.display = 'none';
+      })
+      .catch(error => {
+        clearTimeout(timeoutId);
+        console.error('Error fetching districts:', error.message);
+        if (error.name === 'AbortError') {
+          districtSelect.innerHTML = '<option value="">Request timed out</option>';
+        } else {
+          districtSelect.innerHTML = '<option value="">Error loading districts</option>';
+        }
+        districtSelect.disabled = false;
+        districtLoading.style.display = 'none';
+      });
+  }
+
+  // State change handler with single binding
+  if (stateSelect && districtSelect && !isStateChangeBound) {
+    stateSelect.addEventListener('change', function () {
+      const stateId = this.value;
+      console.log('State changed to:', stateId);
+      populateDistricts(stateId);
+    });
+    isStateChangeBound = true;
+  }
+
+  // Enhanced validation function
+  function validateStep(stepIndex) {
+    const step = steps[stepIndex];
+    if (!step) return false;
+
+    const inputs = step.querySelectorAll('input, select, textarea');
+    let isValid = true;
+
+    step.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    step.querySelectorAll('.invalid-feedback').forEach(el => (el.style.display = 'none'));
+
+    if (stepIndex === 1) {
+      const genderSelected = document.querySelector('input[name="gender"]:checked');
+      if (!genderSelected) {
+        document.getElementById('genderError').style.display = 'block';
+        isValid = false;
+      }
+    }
+
+    if (stepIndex === 3) {
+      const prefTypeSelected = document.querySelector('input[name="preferred_type"]:checked');
+      if (!prefTypeSelected) {
+        document.getElementById('preferredTypeError').style.display = 'block';
+        isValid = false;
+      } else {
+        const institutionSelected = document.getElementById('preferredInstitution').value;
+        if (!institutionSelected) {
+          document.getElementById('institutionError').style.display = 'block';
+          isValid = false;
+        }
+      }
+    }
+
+    for (let input of inputs) {
+      if (input.type === 'hidden' || (input.type === 'radio' && input.name !== 'gender' && input.name !== 'preferred_type')) continue;
+
+      if (input.name === 'name' && input.value.trim()) {
+        const nameRegex = /^[A-Za-z\s]{2,50}$/;
+        if (!nameRegex.test(input.value.trim())) {
+          input.classList.add('is-invalid');
+          input.nextElementSibling.style.display = 'block';
+          isValid = false;
+          continue;
+        }
+      }
+
+      if (input.name === 'mobile' && input.value.trim()) {
+        const mobileRegex = /^[6-9][0-9]{9}$/;
+        if (!mobileRegex.test(input.value.trim())) {
+          input.classList.add('is-invalid');
+          input.nextElementSibling.style.display = 'block';
+          isValid = false;
+          continue;
+        }
+      }
+
+      if (input.name === 'pincode' && input.value.trim()) {
+        const pincodeRegex = /^[1-9][0-9]{5}$/;
+        if (!pincodeRegex.test(input.value.trim())) {
+          input.classList.add('is-invalid');
+          input.nextElementSibling.style.display = 'block';
+          isValid = false;
+          continue;
+        }
+      }
+
+      if ((input.name === 'loan_amount' || input.name === 'monthly_salary' || input.name === 'emis') && input.value) {
+        const value = parseFloat(input.value);
+        const min = parseFloat(input.min);
+        const max = parseFloat(input.max);
+        if (value < min || value > max) {
+          input.classList.add('is-invalid');
+          input.nextElementSibling.style.display = 'block';
+          isValid = false;
+          continue;
+        }
+      }
+
+      if (input.hasAttribute('required') && !input.value.trim()) {
+        input.classList.add('is-invalid');
+        input.nextElementSibling.style.display = 'block';
+        isValid = false;
+        continue;
+      }
+
+      if (input.hasAttribute('pattern') && input.value.trim()) {
+        const pattern = new RegExp(input.getAttribute('pattern'));
+        if (!pattern.test(input.value.trim())) {
+          input.classList.add('is-invalid');
+          input.nextElementSibling.style.display = 'block';
+          isValid = false;
+          continue;
+        }
+      }
+
+      if (input.value.trim()) {
+        if (input.hasAttribute('minlength') && input.value.length < parseInt(input.getAttribute('minlength'))) {
+          input.classList.add('is-invalid');
+          input.nextElementSibling.style.display = 'block';
+          isValid = false;
+          continue;
+        }
+        if (input.hasAttribute('maxlength') && input.value.length > parseInt(input.getAttribute('maxlength'))) {
+          input.classList.add('is-invalid');
+          input.nextElementSibling.style.display = 'block';
+          isValid = false;
+          continue;
+        }
+      }
+    }
+
+    return isValid;
+  }
+
+  // Initialize popovers only once
+  function initPopovers() {
+    if (popoversInitialized) return;
+    
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    popoverTriggerList.forEach(el => {
+      if (!bootstrap.Popover.getInstance(el)) {
+        const raw = el.getAttribute('data-bs-content') || '';
+        const htmlContent = raw.replace(/&#10;|\n/g, '<br>');
+        try {
+          new bootstrap.Popover(el, { 
+            html: true, 
+            content: htmlContent, 
+            sanitize: false, 
+            placement: 'top' 
+          });
+        } catch (error) {
+          console.warn('Could not initialize popover:', error);
+        }
+      }
+    });
+    popoversInitialized = true;
+  }
+
+  // Update institution visibility without re-initializing popovers
+  function updateInstitutionVisibility() {
+    const prefRadio = document.querySelector('input[name="preferred_type"]:checked');
+    const prefVal = prefRadio ? prefRadio.value : '';
+    const list = document.getElementById('institutionList');
+    const banks = document.getElementById('banksContainer');
+    const nbfc = document.getElementById('nbfcContainer');
+    
+    if (!list) return;
+
+    if (prefVal === 'Bank' || prefVal === 'NBFC') {
+      list.classList.remove('d-none');
+      if (banks) banks.classList.toggle('d-none', prefVal !== 'Bank');
+      if (nbfc) nbfc.classList.toggle('d-none', prefVal !== 'NBFC');
+    } else {
+      list.classList.add('d-none');
+      const prefInst = document.getElementById('preferredInstitution');
+      if (prefInst) prefInst.value = '';
+      if (banks) banks.classList.add('d-none');
+      if (nbfc) nbfc.classList.add('d-none');
+      document.querySelectorAll('.institution-label').forEach(b => b.classList.remove('active'));
+    }
+  }
+
+  // Event listeners with better performance
+  document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('next-step')) {
+      e.preventDefault();
+      if (validateStep(currentStep)) {
+        showStep(currentStep + 1);
+      }
+    }
+    if (e.target.classList.contains('prev-step')) {
+      e.preventDefault();
+      showStep(currentStep - 1);
+    }
+    if (e.target.closest('.gender-btn')) {
+      const btn = e.target.closest('.gender-btn');
+      btn.parentElement.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      btn.querySelector('input[type="radio"]').checked = true;
+      document.getElementById('genderError').style.display = 'none';
+    }
+    if (e.target.closest('.preferred-type-btn')) {
+      const btn = e.target.closest('.preferred-type-btn');
+      btn.parentElement.querySelectorAll('.preferred-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      btn.querySelector('input[type="radio"]').checked = true;
+      document.getElementById('preferredTypeError').style.display = 'none';
+      updateInstitutionVisibility();
+    }
+    if (e.target.closest('.institution-label')) {
+      const label = e.target.closest('.institution-label');
+      document.querySelectorAll('.institution-label').forEach(l => l.classList.remove('active'));
+      label.classList.add('active');
+      const radio = label.querySelector('.institution-radio');
+      if (radio) {
+        radio.checked = true;
+        document.getElementById('preferredInstitution').value = radio.value;
+        document.getElementById('institutionError').style.display = 'none';
+      }
+    }
+    if (e.target.id === 'showOtpStep') {
+      e.preventDefault();
+      if (validateStep(currentStep)) {
+        showStep(currentStep + 1);
+      }
+    }
+  });
+
+  // Form submission
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    console.log('Form submission started');
+    
+    if (currentStep === 4) {
+      const otpInput = this.querySelector('input[name="otp"]');
+      if (!/^\d{6}$/.test(otpInput.value)) {
+        otpInput.classList.add('is-invalid');
+        otpInput.nextElementSibling.style.display = 'block';
+        return;
+      }
+
+      const formData = new FormData(this);
+      const params = new URLSearchParams();
+      for (let [key, value] of formData.entries()) {
+        params.append(key, value);
+        console.log(`Form data: ${key} = ${value}`);
+      }
+
+      console.log('Submitting to:', this.action);
+      
+      fetch(this.action, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params,
+      })
+        .then(response => {
+          console.log('Response status:', response.status);
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          console.log('Response data:', data);
+          if (data.success) {
+            showStep(5);
+            this.reset();
+            document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.preferred-type-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('institutionList')?.classList.add('d-none');
+            document.querySelectorAll('.institution-label').forEach(b => b.classList.remove('active'));
+            document.getElementById('preferredInstitution').value = '';
+            document.getElementById('banksContainer')?.classList.add('d-none');
+            document.getElementById('nbfcContainer')?.classList.add('d-none');
+            if (districtSelect) districtSelect.innerHTML = '<option value="">Select District</option>';
+            currentStep = 0;
+            popoversInitialized = false;
+          } else {
+            alert('Error: ' + (data.message || 'Submission failed'));
+          }
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+          alert('An error occurred while submitting the form. Please try again.');
+        });
+    }
+  });
+
+  // Initialize
+  showStep(0);
+  console.log('Enquiry form initialized successfully');
+});
+</script>
+
+<%- include('./partials/footer') %>

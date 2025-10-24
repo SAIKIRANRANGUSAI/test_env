@@ -1,0 +1,494 @@
+<%- include('../layouts/admin_layouts_header', { title: 'Admin | About Us' , currentPage: 'about-us' }) %>
+    <%- include('../layouts/admin_layouts_sidebar', { currentPage: 'about-us' }) %>
+        <div class="admin-container">
+            <% if (message) { %>
+                <div class="alert-success" role="alert">
+                    <span class="alert-icon">✓</span>
+                    <%= message %>
+                        <button type="button" class="alert-close"
+                            onclick="this.parentElement.style.display='none'">&times;</button>
+                </div>
+                <% } %>
+
+                    <div class="page-header">
+                        <h1 class="page-title">About Us Page Management</h1>
+                        <p class="page-subtitle">Manage and edit the About Us sections below.</p>
+                    </div>
+
+                    <form action="/admin/about-us" method="POST" enctype="multipart/form-data" class="section-form">
+                        <% const sections=[ { title: 'Home Section' , heading: 'home_heading' ,
+                            description: 'home_description' , image: 'home_image' , recImage: '700 × 482 px' ,
+                            headingLimit: 60, descLimit: 500 }, { title: 'Transparent Comparison Section' ,
+                            heading: 'comparison_heading' , description: 'comparison_description' ,
+                            image: 'comparison_image' , recImage: '36 × 37 px' , headingLimit: 50, descLimit: 400 }, {
+                            title: 'Reviews & Ratings Section' , heading: 'reviews_heading' ,
+                            description: 'reviews_description' , image: 'reviews_image' , recImage: '36 × 37 px' ,
+                            headingLimit: 50, descLimit: 400 }, { title: 'Loan Database Section' ,
+                            heading: 'loan_heading' , description: 'loan_description' , image: 'loan_image' ,
+                            recImage: '36 × 37 px' , headingLimit: 50, descLimit: 400 }, {
+                            title: 'Expertise & Objectivity Section' , heading: 'expertise_heading' ,
+                            description: 'expertise_description' , image: 'expertise_image' , recImage: '36 × 37 px' ,
+                            headingLimit: 50, descLimit: 400 }, { title: 'About Us Main Section' ,
+                            heading: 'about_heading' , description: 'about_description' , image: 'about_image' ,
+                            recImage: '740 × 1110 px' , headingLimit: 60, descLimit: 600 } ]; %>
+
+                            <% sections.forEach(section=> { %>
+                                <section class="form-section">
+                                    <div class="section-header">
+                                        <h2 class="section-title">
+                                            <%= section.title %>
+                                        </h2>
+                                    </div>
+
+                                    <!-- Heading -->
+                                    <!-- Heading -->
+<div class="form-group">
+    <label><%= section.title %> Heading</label>
+    <div class="input-wrapper">
+        <input type="text" name="<%= section.heading %>" 
+               value="<%= data[section.heading] || '' %>">
+        <small class="char-note">Recommended: max <%= section.headingLimit %> characters</small>
+    </div>
+</div>
+
+<!-- Description -->
+<div class="form-group">
+    <label><%= section.title %> Description</label>
+    <div class="input-wrapper">
+        <textarea name="<%= section.description %>" id="<%= section.description %>" 
+                  class="ckeditor-textarea" 
+                  style="min-height: 250px; line-height: 1.6; padding: 12px;">
+            <%= data[section.description] || '' %>
+        </textarea>
+        <small class="char-note">Recommended: max <%= section.descLimit %> characters</small>
+    </div>
+</div>
+
+
+                                    <!-- Image -->
+                                    <div class="form-group">
+                                        <label>
+                                            <%= section.title %> Image
+                                        </label>
+                                        <div class="image-upload-wrapper">
+                                            <% if (data[section.image]) { %>
+                                                <div class="image-preview">
+                                                    <img src="<%= data[section.image] %>" alt="Current Image">
+                                                </div>
+                                                <input type="hidden" name="old_<%= section.image %>"
+                                                    value="<%= data[section.image] %>">
+                                                <% } else { %>
+                                                    <div class="image-placeholder">
+                                                        <span class="placeholder-icon">📷</span>
+                                                        <p>No image selected</p>
+                                                    </div>
+                                                    <% } %>
+                                                        <input type="file" name="<%= section.image %>" accept="image/*">
+                                                        <small class="image-hint">Recommended: <%= section.recImage %>
+                                                                </small>
+                                        </div>
+                                    </div>
+                                </section>
+                                <% }) %>
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn-primary">Update About Us</button>
+                                        <button type="reset" class="btn-secondary">Reset</button>
+                                    </div>
+                    </form>
+        </div>
+
+        <script>
+            function updateCharCount(el) {
+                const countEl = el.parentElement.querySelector('.char-count');
+                const max = parseInt(el.dataset.max || '0');
+                if (countEl) {
+                    countEl.textContent = el.value.length;
+                    // Optionally color red if exceeding
+                    if (max && el.value.length > max) {
+                        countEl.style.color = 'red';
+                    } else {
+                        countEl.style.color = '#6b7280';
+                    }
+                }
+            }
+
+            // Initialize counts on page load
+            // document.addEventListener('DOMContentLoaded', function () {
+            //     document.querySelectorAll('.ckeditor-textarea, input[type="text"]').forEach(el => {
+            //         updateCharCount(el);
+            //     });
+            // });
+        </script>
+
+        <style>
+            .char-note {
+                font-size: 12px;
+                color: #6b7280;
+                position: absolute;
+                right: 10px;
+                top: 12px;
+            }
+
+            .input-wrapper {
+                position: relative;
+            }
+        </style>
+
+
+        <!-- TinyMCE 8 -->
+        <!-- TinyMCE Minimal Setup with Headings & Paragraphs -->
+        <!-- TinyMCE 8 with Character Limit -->
+        <script src="https://cdn.tiny.cloud/1/b0dlmco2b0daotuc268ppv708466zn6px6few9r7pt3v880y/tinymce/8/tinymce.min.js"
+            referrerpolicy="origin" crossorigin="anonymous"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+    const editors = [
+        'home_description',
+        'comparison_description',
+        'reviews_description',
+        'loan_description',
+        'expertise_description',
+        'about_description'
+    ];
+
+    editors.forEach(id => {
+        const textarea = document.getElementById(id);
+        if (textarea) {
+            tinymce.init({
+                selector: `#${id}`,
+                height: 300,
+                plugins: ['lists', 'link', 'table', 'autolink', 'wordcount', 'code', 'format'],
+                toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link table | code',
+                menubar: false,
+                branding: false,
+                block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6',
+                content_style: 'body { font-family:Arial,Helvetica,sans-serif; font-size:14px; }'
+            });
+        }
+    });
+});
+
+        </script>
+
+
+
+
+        <style>
+            /* Optional: set editor min-height */
+            .ck-editor__editable_inline {
+                min-height: 250px;
+            }
+        </style>
+
+
+
+        <style>
+            .admin-container {
+                padding: 32px;
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                min-height: calc(100vh - 120px);
+            }
+
+            .page-header {
+                margin-bottom: 40px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .page-title {
+                font-size: 28px;
+                font-weight: 700;
+                color: #1f2937;
+                margin: 0 0 4px 0;
+            }
+
+            .page-subtitle {
+                font-size: 16px;
+                color: #6b7280;
+                margin: 0;
+            }
+
+            .ck-editor__editable {
+                min-height: 300px;
+            }
+
+
+            .alert-success {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: #ffffff;
+                padding: 16px 20px;
+                border-radius: 8px;
+                font-weight: 500;
+                margin-bottom: 24px;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .alert-icon {
+                font-size: 18px;
+                margin-right: 8px;
+            }
+
+            .alert-close {
+                background: none;
+                border: none;
+                color: #ffffff;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 0 4px;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+
+            .alert-close:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .section-form {
+                display: flex;
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .form-section {
+                background: #f9fafb;
+                padding: 32px;
+                border-radius: 12px;
+                border: 1px solid #e5e7eb;
+                position: relative;
+            }
+
+            .section-header {
+                margin-bottom: 24px;
+            }
+
+            .section-title {
+                font-size: 22px;
+                font-weight: 700;
+                color: #1f2937;
+                margin: 0 0 4px 0;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-group:last-child {
+                margin-bottom: 0;
+            }
+
+            .form-group label {
+                display: block;
+                font-weight: 600;
+                font-size: 14px;
+                color: #374151;
+                margin-bottom: 8px;
+            }
+
+            .input-wrapper {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .form-group input[type="text"] {
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 14px;
+                background: #ffffff;
+                transition: border-color 0.2s, box-shadow 0.2s;
+                box-sizing: border-box;
+            }
+
+            .form-group input[type="text"]:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+
+            /* CKEditor specific styles */
+            .ckeditor-textarea {
+                width: 100%;
+                min-height: 100px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 12px 16px;
+                font-family: inherit;
+                line-height: 1.5;
+            }
+
+            /* CKEditor container styling */
+            .cke_chrome {
+                border: 1px solid #d1d5db !important;
+                border-radius: 6px !important;
+                overflow: hidden;
+            }
+
+            .cke_top {
+                border-bottom: 1px solid #e5e7eb !important;
+                background: #f9fafb !important;
+            }
+
+            .cke_bottom {
+                border-top: 1px solid #e5e7eb !important;
+                background: #f9fafb !important;
+            }
+
+            .image-upload-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .image-preview,
+            .image-placeholder {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 16px;
+                border: 2px dashed #d1d5db;
+                border-radius: 8px;
+                background: #f9fafb;
+                transition: border-color 0.2s;
+            }
+
+            .image-preview:hover,
+            .image-placeholder:hover {
+                border-color: #3b82f6;
+            }
+
+            .image-preview img {
+                max-width: 180px;
+                max-height: 180px;
+                object-fit: cover;
+                border-radius: 6px;
+                margin-bottom: 8px;
+            }
+
+            .image-placeholder .placeholder-icon {
+                font-size: 48px;
+                margin-bottom: 8px;
+                opacity: 0.5;
+            }
+
+            .image-placeholder p {
+                margin: 0;
+                color: #6b7280;
+                font-size: 14px;
+            }
+
+            .form-group input[type="file"] {
+                padding: 8px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                background: #ffffff;
+            }
+
+            .image-hint {
+                font-size: 12px;
+                color: #6b7280;
+                text-align: center;
+            }
+
+            .form-actions {
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+                padding-top: 20px;
+                border-top: 1px solid #e5e7eb;
+                margin-top: 20px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-primary {
+                background: #3b82f6;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: #2563eb;
+                transform: translateY(-1px);
+            }
+
+            .btn-secondary {
+                background: #f3f4f6;
+                color: #374151;
+            }
+
+            .btn-secondary:hover {
+                background: #e5e7eb;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 1024px) {
+                .admin-container {
+                    margin-left: 20px;
+                    margin-right: 20px;
+                    padding: 24px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .admin-container {
+                    margin-left: 0;
+                    margin-right: 0;
+                    border-radius: 0;
+                    box-shadow: none;
+                }
+
+                .form-actions {
+                    flex-direction: column;
+                }
+
+                .btn-primary,
+                .btn-secondary {
+                    width: 100%;
+                }
+
+                .section-form {
+                    gap: 24px;
+                }
+
+                .form-section {
+                    padding: 24px;
+                }
+
+                /* Adjust CKEditor for mobile */
+                .cke_toolbar {
+                    float: none !important;
+                }
+            }
+        </style>
+
+        <%- include('../layouts/admin_layouts_footer') %>

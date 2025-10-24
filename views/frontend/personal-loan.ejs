@@ -1,0 +1,88 @@
+<%- include('./partials/header') %>
+
+<!-- Banner Start -->
+<section class="banner">
+    <div class="container">
+        <div class="row gy-4 gy-sm-0 align-items-center">
+            <div class="col-12 col-sm-12">
+                <div class="banner__content">
+                    <h1 class="banner__title display-4 wow fadeInLeft" data-wow-duration="0.8s"><%= service.heading %></h1> 
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb wow fadeInRight" data-wow-duration="0.8s">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><%= service.heading %></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Banner End -->
+
+<section class="personal-loan">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 col-md-6">
+                <div class="loan-content">
+                    <h3><%- service.heading %> Assistance</h3>
+                    <p><%- service.description %></p>
+                    <a href="/enquiry/<%= service.id %>" class="btn_theme btn_theme_active">
+  Enquiry Now <i class="bi bi-arrow-up-right"></i><span></span>
+</a>
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-6">
+                <div class="loan-img">
+                    <img class="img-fluid" src="<%- service.image_1 %>" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Start -->
+<section class="section faq-section personal-loan" id="faqa">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-5 col-md-6">
+                <div class="loan-img">
+                    <img src="<%- service.image_2 %>" alt="">
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-6">
+                <div class="accordion wow fadeInUp" data-wow-duration="0.8s" id="faq2">
+                    <% if(faqs && faqs.length > 0) { %>
+                        <% faqs.forEach((faq, index) => { %>
+                        <div class="accordion-item">
+                            <h5 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2-accordion-<%= index+1 %>" aria-expanded="false" aria-controls="faq2-accordion-<%= index+1 %>">
+                                    <%- faq.question %>
+                                </button>
+                            </h5>
+                            <div id="faq2-accordion-<%= index+1 %>" class="accordion-collapse collapse" data-bs-parent="#faq2">
+                                <div class="accordion-body">
+                                    <p><%- faq.answer %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No FAQs available for this service.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- FAQ End -->
+
+<%- include('./partials/footer') %>

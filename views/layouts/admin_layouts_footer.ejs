@@ -1,0 +1,226 @@
+            </div>
+
+            <!-- Footer -->
+            <footer class="dashboard-footer">
+                <%
+                  const startYear = 2025;
+                  const currentYear = new Date().getFullYear();
+                  const displayYear = currentYear === startYear ? `${startYear}` : `${startYear}-${currentYear}`;
+                %>
+                <p>
+                  Copyright &copy; <%= displayYear %> | Vishaka Industrial | All Rights Reserved | Design and Developed by 
+                  <a href="https://thecolourmoon.com" target="_blank">Colourmoon</a>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Global admin panel functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar
+            const toggleButton = document.querySelector('.toggle-sidebar');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            
+            if (toggleButton && sidebar) {
+                toggleButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    if (overlay) overlay.classList.toggle('active');
+                });
+            }
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth < 992 && 
+                    sidebar.classList.contains('active') &&
+                    !sidebar.contains(event.target) && 
+                    !event.target.closest('.toggle-sidebar')) {
+                    sidebar.classList.remove('active');
+                    if (overlay) overlay.classList.remove('active');
+                }
+            });
+            
+            // Modal functionality
+            const modals = document.querySelectorAll('.modal');
+            
+            // Open modal
+            document.querySelectorAll('[data-modal-target]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = document.querySelector(button.getAttribute('data-modal-target'));
+                    if (modal) {
+                        modal.classList.add('show');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+            
+            // Close modal
+            document.querySelectorAll('.modal-close, .modal .btn[data-dismiss="modal"]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.modal');
+                    if (modal) {
+                        modal.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+            
+            // Image preview functionality
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    const previewId = this.getAttribute('data-preview');
+                    if (previewId && this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        const preview = document.getElementById(previewId);
+                        
+                        reader.onload = function(e) {
+                            if (preview) {
+                                preview.src = e.target.result;
+                                preview.style.display = 'block';
+                            }
+                        };
+                        
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+            });
+            
+            // Confirm delete actions
+            document.querySelectorAll('a[data-confirm]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (!confirm(this.getAttribute('data-confirm'))) {
+                        e.preventDefault();
+                    }
+                });
+            });
+            
+            // Auto-hide alerts after 5 seconds
+            document.querySelectorAll('.alert').forEach(alert => {
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.style.opacity = '0';
+                        setTimeout(() => {
+                            if (alert.parentNode) alert.parentNode.removeChild(alert);
+                        }, 300);
+                    }
+                }, 5000);
+            });
+            
+            // Table row actions
+            document.querySelectorAll('.table tbody tr').forEach(row => {
+                row.addEventListener('click', function(e) {
+                    // Don't trigger if clicking a button or link
+                    if (!e.target.closest('button') && !e.target.closest('a')) {
+                        const viewUrl = this.getAttribute('data-view-url');
+                        if (viewUrl) {
+                            window.location.href = viewUrl;
+                        }
+                    }
+                });
+            });
+            
+            // Initialize tooltips if using a library
+            if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }
+        });
+        
+        // Utility functions for admin panel
+        const AdminUtils = {
+            // Show notification
+            showNotification: function(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type}`;
+                notification.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    ${message}
+                `;
+                
+                document.querySelector('.content').prepend(notification);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.opacity = '0';
+                        setTimeout(() => {
+                            if (notification.parentNode) notification.parentNode.removeChild(notification);
+                        }, 300);
+                    }
+                }, 5000);
+            },
+            
+            // Toggle password visibility
+            togglePassword: function(inputId) {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                }
+            },
+            
+            // Format date
+            formatDate: function(dateString) {
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            },
+            
+            // Confirm before action
+            confirmAction: function(message, callback) {
+                if (confirm(message || 'Are you sure?')) {
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                    return true;
+                }
+                return false;
+            },
+            
+            // Toggle element visibility
+            toggleElement: function(elementId) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+                }
+            },
+            
+            // Load content via AJAX
+            loadContent: function(url, containerId, callback) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                container.innerHTML = '<div class="text-center p-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading...</div>';
+                
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        container.innerHTML = html;
+                        if (typeof callback === 'function') {
+                            callback();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading content:', error);
+                        container.innerHTML = '<div class="alert alert-danger">Error loading content</div>';
+                    });
+            }
+        };
+        
+        // Make AdminUtils available globally
+        window.AdminUtils = AdminUtils;
+    </script>
+</body>
+</html>

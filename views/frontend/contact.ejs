@@ -1,0 +1,167 @@
+<%- include('./partials/header') %>
+    <!-- Banner Start -->
+    <section class="banner">
+        <div class="container ">
+            <div class="row gy-4 gy-sm-0 align-items-center">
+                <div class="col-12 col-sm-12">
+                    <div class="banner__content">
+                        <h1 class="banner__title display-4 wow fadeInLeft" data-wow-duration="0.8s">Contact Us</h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb wow fadeInRight" data-wow-duration="0.8s">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Banner End -->
+
+
+
+    <!-- contact start -->
+    <section class="sign-up contact section">
+        <div class="container">
+            <div class="row gy-5 gy-xl-0 justify-content-center justify-content-lg-between">
+                <div class="col-12 col-lg-7 col-xxl-8">
+                    <form method="POST" autocomplete="off"  class="sign-up__form wow fadeInDown"
+                        data-wow-duration="0.8s">
+                        <h3 class="contact__title wow fadeInDown" data-wow-duration="0.8s">Get in touch with us.</h3>
+
+                        <% if (msg) { %>
+                            <div class="alert <%= msg.type === 'success' ? 'alert-success' : 'alert-danger' %>">
+                                <%= msg.text %>
+                            </div>
+                            <% } %>
+
+                                <div class="sign-up__form-part">
+                                    <div class="input-group">
+                                        <div class="input-single">
+                                            <label class="label" for="name">Name</label>
+                                            <input type="text" class="form-control" name="name" id="name"
+                                                placeholder="Enter Your Name..." required>
+                                        </div>
+                                        <div class="input-single">
+                                            <label class="label" for="email">Email</label>
+                                            <input type="email" class="form-control" name="email" id="email"
+                                                placeholder="Enter Your Email..." required>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <div class="input-single">
+                                            <label class="label" for="phone">Phone</label>
+                                            <input type="tel" class="form-control" name="phone" id="phone"
+                                                placeholder="Enter Your Number..." required>
+                                        </div>
+                                        <div class="input-single">
+                                            <label class="label" for="subject">Subject</label>
+                                            <input type="text" class="form-control" name="subject" id="subject"
+                                                placeholder="Enter Your Subject..." required>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-single">
+                                        <label class="label" for="message">Message</label>
+                                        <textarea class="form-control" id="message" name="message" rows="8"
+                                            placeholder="Enter Your Message..." required></textarea>
+                                    </div>
+
+                                    <!-- Google reCAPTCHA -->
+                                    <div class="g-recaptcha mt-3"
+                                        data-sitekey="6Ld7auErAAAAABbFD7KLAZMrNw1g9XWy86BUQLvt"></div>
+                                </div>
+
+                                <span id="msg"></span>
+                                <button type="submit" class="btn_theme btn_theme_active mt_40" name="submit"
+                                    id="submit">
+                                    Send Message <i class="bi bi-arrow-up-right"></i><span></span>
+                                </button>
+                    </form>
+
+                    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+                </div>
+                <div class="col-12 col-lg-5 col-xxl-4">
+                    <div class="more-help wow fadeInUp" data-wow-duration="0.8s">
+                        <h3 class="contact__title wow fadeInUp" data-wow-duration="0.8s">Need more help?</h3>
+                        <div class="more-help__content">
+                            <!-- Call Now Card -->
+                            <div class="card card--small">
+                                <div class="card--small-icon">
+                                    <i class="bi bi-telephone"></i>
+                                </div>
+                                <div class="card--small-content">
+                                    <h5 class="card--small-title">Call Now</h5>
+                                    <div class="gap-1 flex-column">
+                                        <% if (settings.phone_numbers) { const
+                                            phoneList=settings.phone_numbers.split(',').map(num=> num.trim());
+                                            phoneList.forEach(number => {
+                                            const cleanNumber = number.replace(/\D/g, '');
+                                            %>
+                                            <a href="tel:+<%= cleanNumber %>" class="card--small-call">
+                                                <%= number %>
+                                            </a>
+                                            <% }); } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email Address Card -->
+                            <div class="card card--small">
+                                <div class="card--small-icon">
+                                    <i class="bi bi-envelope-open"></i>
+                                </div>
+                                <div class="card--small-content">
+                                    <h5 class="card--small-title">Email Address</h5>
+                                    <div class="text-left">
+                                        <% if (settings.emails) { const emailList=settings.emails.split(',').map(email=>
+                                            email.trim());
+                                            emailList.forEach(email => {
+                                            %>
+                                            <a href="mailto:<%= email %>" class="card--small-call">
+                                                <%= email %>
+                                            </a>
+                                            <% }); } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Location Card -->
+                            <div class="card card--small">
+                                <div class="card--small-icon">
+                                    <i class="bi bi-geo-alt"></i>
+                                </div>
+                                <div class="card--small-content">
+                                    <h5 class="card--small-title">Location</h5>
+                                    <div class="gap-1 flex-column">
+                                        <p>
+                                            <%= settings.address %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- contact end -->
+
+    <style>
+        .alert {
+    transition: 1s;
+    margin-bottom: -20px;
+    margin-top: -16px;
+    display: block;
+    margin-bottom: 10px;
+}
+    </style>
+
+
+    <%- include('./partials/footer') %>

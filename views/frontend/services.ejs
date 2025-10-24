@@ -1,0 +1,82 @@
+<%- include('./partials/header') %>
+    <!-- Banner Start -->
+    <section class="banner">
+        <div class="container ">
+            <div class="row gy-4 gy-sm-0 align-items-center">
+                <div class="col-12 col-sm-12">
+                    <div class="banner__content">
+                        <h1 class="banner__title display-4 wow fadeInLeft" data-wow-duration="0.8s">Our Services</h1> 
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb wow fadeInRight" data-wow-duration="0.8s">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Our Services</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <!-- Banner End -->
+
+    
+
+    <!-- feature start -->
+    <section class="feature section">
+      <div class="animation">
+        <img src="/images/hero_vector_dollar.png" alt="Image" />
+        <img src="/images/hero_vector_message.png" alt="Image" />
+      </div>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-lg-9 col-xxl-8">
+            <div class="section__header">
+              <h2
+                class="section__header-title wow fadeInUp"
+                data-wow-duration="0.8s"
+              >
+                <%- heading %>
+              </h2>
+              <p
+                class="section__header-content wow fadeInDown"
+                data-wow-duration="0.8s"
+              >
+                <%- description %>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+  <% if (services && services.length > 0) { %>
+    <% services.forEach((service) => { %>
+      <div class="col-md-3 mb-3">
+        <div class="card card--custom">
+          <div class="card__icon">
+            <img src="<%= service.icon_image %>" width="50" alt="" />
+          </div>
+          <div class="card__content">
+            <h4 class="card__title">
+              <a href="/personal-loan/<%- service.id %>"><%- service.heading %></a>
+            </h4>
+            <p class="fs-small">
+              <%- service.short_description %>
+            </p>
+            <a href="/personal-loan/<%- service.id %>" class="btn_theme social_box">
+              <i class="bi bi-arrow-up-right"></i><span></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <p>No services found.</p>
+  <% } %>
+</div>
+
+        <!--row-->
+      </div>
+    </section>
+
+
+<%- include('./partials/footer') %>
